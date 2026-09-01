@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mural Acadêmico | Gerenciador de Avisos e Ocorrências</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --primary: #2563eb;
+      --primary-hover: #1d4ed8;
+      --bg-dark: #0f172a;
+      --bg-card: #1e293b;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --accent: #38bdf8;
+      --border: #334155;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Inter', sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      line-height: 1.6;
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+
+    /* Header */
+    header {
+      border-bottom: 1px solid var(--border);
+      padding: 20px 0;
+      background: rgba(15, 23, 42, 0.8);
+      backdrop-filter: blur(10px);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .nav-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .logo span {
+      color: var(--accent);
+    }
+
+    .badge {
+      background: rgba(56, 189, 248, 0.1);
+      color: var(--accent);
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      border: 1px solid rgba(56, 189, 248, 0.2);
+    }
+
+    /* Hero Section */
+    .hero {
+      padding: 80px 0 60px;
+      text-align: center;
+    }
+
+    .hero h1 {
+      font-size: 2.8rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      margin-bottom: 20px;
+      background: linear-gradient(180deg, #fff 0%, var(--text-muted) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hero p {
+      font-size: 1.15rem;
+      color: var(--text-muted);
+      max-width: 650px;
+      margin: 0 auto 35px;
+    }
+
+    .btn-group {
+      display: flex;
+      gap: 15px;
+      justify-content: center;
+    }
+
+    .btn {
+      padding: 12px 28px;
+      border-radius: 8px;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-primary {
+      background-color: var(--primary);
+      color: #fff;
+    }
+
+    .btn-primary:hover {
+      background-color: var(--primary-hover);
+      transform: translateY(-1px);
+    }
+
+    .btn-secondary {
+      background-color: transparent;
+      color: var(--text-main);
+      border: 1px solid var(--border);
+    }
+
+    .btn-secondary:hover {
+      background-color: var(--bg-card);
+    }
+
+    /* Features Grid */
+    .features {
+      padding: 60px 0;
+    }
+
+    .section-title {
+      text-align: center;
+      margin-bottom: 50px;
+    }
+
+    .section-title h2 {
+      font-size: 1.8rem;
+      color: var(--text-main);
+    }
+
+    .section-title p {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 25px;
+    }
+
+    .card {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 30px;
+      transition: transform 0.2s ease, border-color 0.2s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-4px);
+      border-color: var(--accent);
+    }
+
+    .card-icon {
+      width: 42px;
+      height: 42px;
+      background: rgba(37, 99, 235, 0.15);
+      color: var(--accent);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      margin-bottom: 20px;
+    }
+
+    .card h3 {
+      font-size: 1.2rem;
+      margin-bottom: 10px;
+      color: var(--text-main);
+    }
+
+    .card p {
+      color: var(--text-muted);
+      font-size: 0.92rem;
+      line-height: 1.5;
+    }
+
+    /* Architecture Highlight */
+    .arch-box {
+      background: linear-gradient(180deg, var(--bg-card) 0%, var(--bg-dark) 100%);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 40px;
+      margin: 40px 0 80px;
+      text-align: center;
+    }
+
+    .arch-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: center;
+      margin-top: 20px;
+    }
+
+    .tech-tag {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border);
+      padding: 6px 14px;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    /* Footer */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 30px 0;
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 0.85rem;
+    }
+
+    @media (max-width: 768px) {
+      .hero h1 { font-size: 2rem; }
+      .btn-group { flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="container nav-container">
+      <div class="logo">
+        📌 Mural<span>Acadêmico</span>
+      </div>
+      <div class="badge">Projeto Web 2026.2</div>
+    </div>
+  </header>
+
+  <section class="hero">
+    <div class="container">
+      <h1>Centralização e Transparência Comunicação Campus</h1>
+      <p>
+        Uma plataforma moderna e Serverless desenvolvida para simplificar o acesso a avisos institucionais e otimizar o registro de ocorrências na universidade.
+      </p>
+      <div class="btn-group">
+        <a href="#funcionalidades" class="btn btn-primary">Ver Funcionalidades</a>
+        <a href="https://github.com/nattanflopes/web-2026-2-NATTANFERREIRALOPES" target="_blank" class="btn btn-secondary">Repositório GitHub ↗</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="features" id="funcionalidades">
+    <div class="container">
+      <div class="section-title">
+        <h2>Principais Funcionalidades</h2>
+        <p>Projetado para atender às necessidades de discentes, docentes e técnicos.</p>
+      </div>
+
+      <div class="grid">
+        <div class="card">
+          <div class="card-icon">📢</div>
+          <h3>Mural de Avisos Unificado</h3>
+          <p>Acesse comunicados institucionais, edital de ensino e avisos urgentes categorizados em um único feed em tempo real.</p>
+        </div>
+
+        <div class="card">
+          <div class="card-icon">🛠️</div>
+          <h3>Registro de Ocorrências</h3>
+          <p>Relate problemas operacionais ou de infraestrutura nos blocos do campus diretamente para a administração responsável.</p>
+        </div>
+
+        <div class="card">
+          <div class="card-icon">🔎</div>
+          <h3>Filtros por Categoria e Bloco</h3>
+          <p>Encontre rapidamente informações específicas utilizando pesquisas por palavra-chave, bloco do campus ou tipo de evento.</p>
+        </div>
+
+        <div class="card">
+          <div class="card-icon">📂</div>
+          <h3>Anexo de Documentos</h3>
+          <p>Download direto de edital em PDF e upload de comprovantes ou fotos de apoio integrados ao armazenamento em nuvem.</p>
+        </div>
+
+        <div class="card">
+          <div class="card-icon">🔐</div>
+          <h3>Controle de Acesso por Perfil</h3>
+          <p>Níveis de permissão diferenciados para leitores (discentes) e publicadores/administradores (docentes e técnicos).</p>
+        </div>
+
+        <div class="card">
+          <div class="card-icon">📊</div>
+          <h3>Acompanhamento de Status</h3>
+          <p>Acompanhe a resolução das solicitações registradas em tempo real (Aberta, Em Andamento ou Resolvida).</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="container">
+    <div class="arch-box">
+      <h2>Infraestrutura 100% Serverless em Nuvem</h2>
+      <p style="color: var(--text-muted); margin-top: 8px;">Desenvolvido com foco em alta disponibilidade, baixo custo e escalabilidade na AWS.</p>
+      <div class="arch-tags">
+        <span class="tech-tag">AWS Lambda</span>
+        <span class="tech-tag">Amazon API Gateway</span>
+        <span class="tech-tag">Amazon DynamoDB</span>
+        <span class="tech-tag">Amazon S3</span>
+        <span class="tech-tag">CloudFront</span>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="container">
+      <p>Projeto Final da Disciplina de Desenvolvimento Web — UFERSA (2026.2)</p>
+      <p style="margin-top: 5px; color: #64748b;">Mantido por Nattan Ferreira Lopes</p>
+    </div>
+  </footer>
+
+</body>
+</html>
