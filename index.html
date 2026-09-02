@@ -1,342 +1,330 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="google-site-verification" content="NJ0OVRvDgStL1wObqcalbYseoolZMZn6Al6BrO2wP0M" />
-  <title>Mural Acadêmico | Gerenciador de Avisos e Ocorrências</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
-  
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Meu Portfólio & Competências</title>
   <style>
+    /* ==========================================================================
+       RESET & VARIÁVEIS DE DESIGN (TEMA ESCURO EDITORIAL / ASIMÉTRICO)
+       ========================================================================== */
     :root {
-      --primary: #2563eb;
-      --primary-hover: #1d4ed8;
-      --bg-dark: #0f172a;
-      --bg-card: #1e293b;
-      --text-main: #f8fafc;
-      --text-muted: #94a3b8;
-      --accent: #38bdf8;
-      --border: #334155;
+      --bg: #0d0e12;
+      --card-bg: #151821;
+      --accent: #ff4d2d; /* Laranja editorial de alto contraste */
+      --text-main: #f0f2f5;
+      --text-muted: #8b92a5;
+      --border: #232736;
+      --font-mono: "Courier New", Courier, monospace;
+      --font-sans: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     }
 
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
-      font-family: 'Inter', sans-serif;
     }
 
     body {
-      background-color: var(--bg-dark);
+      background-color: var(--bg);
       color: var(--text-main);
-      line-height: 1.6;
+      font-family: var(--font-sans);
+      line-height: 1.5;
+      padding: 3rem 1.5rem;
+      min-height: 100vh;
     }
 
+    /* Layout Assimétrico */
     .container {
-      max-width: 1100px;
+      max-width: 1000px;
       margin: 0 auto;
-      padding: 0 20px;
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 3rem;
     }
 
-    /* Header */
+    @media (min-width: 850px) {
+      .container {
+        grid-template-columns: 320px 1fr;
+      }
+    }
+
+    /* ==========================================================================
+       CABEÇALHO & PERFIL (COLUNA DA ESQUERDA)
+       ========================================================================== */
     header {
-      border-bottom: 1px solid var(--border);
-      padding: 20px 0;
-      background: rgba(15, 23, 42, 0.8);
-      backdrop-filter: blur(10px);
       position: sticky;
-      top: 0;
-      z-index: 100;
-    }
-
-    .nav-container {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .logo {
-      font-size: 1.25rem;
-      font-weight: 700;
-      color: var(--text-main);
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .logo span {
-      color: var(--accent);
+      top: 3rem;
+      height: fit-content;
     }
 
     .badge {
-      background: rgba(56, 189, 248, 0.1);
+      display: inline-block;
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      text-transform: uppercase;
       color: var(--accent);
-      padding: 4px 12px;
-      border-radius: 20px;
-      font-size: 0.8rem;
-      border: 1px solid rgba(56, 189, 248, 0.2);
+      border: 1px solid var(--accent);
+      padding: 0.2rem 0.6rem;
+      margin-bottom: 1rem;
+      letter-spacing: 1px;
     }
 
-    /* Hero Section */
-    .hero {
-      padding: 80px 0 60px;
-      text-align: center;
+    h1 {
+      font-size: 2.5rem;
+      font-weight: 800;
+      line-height: 1.1;
+      letter-spacing: -1px;
+      margin-bottom: 0.5rem;
     }
 
-    .hero h1 {
-      font-size: 2.8rem;
-      font-weight: 700;
-      letter-spacing: -0.02em;
-      margin-bottom: 20px;
-      background: linear-gradient(180deg, #fff 0%, var(--text-muted) 100%);
-      background-clip: text;
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-
-    .hero p {
-      font-size: 1.15rem;
+    .subtitle {
       color: var(--text-muted);
-      max-width: 650px;
-      margin: 0 auto 35px;
+      font-size: 1rem;
+      margin-bottom: 1.5rem;
     }
 
-    .btn-group {
-      display: flex;
-      gap: 15px;
-      justify-content: center;
-    }
-
-    .btn {
-      padding: 12px 28px;
-      border-radius: 8px;
-      font-weight: 600;
-      text-decoration: none;
-      transition: all 0.2s ease;
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .btn-primary {
-      background-color: var(--primary);
-      color: #fff;
-    }
-
-    .btn-primary:hover {
-      background-color: var(--primary-hover);
-      transform: translateY(-1px);
-    }
-
-    .btn-secondary {
-      background-color: transparent;
-      color: var(--text-main);
-      border: 1px solid var(--border);
-    }
-
-    .btn-secondary:hover {
-      background-color: var(--bg-card);
-    }
-
-    /* Features Grid */
-    .features {
-      padding: 60px 0;
-    }
-
-    .section-title {
-      text-align: center;
-      margin-bottom: 50px;
-    }
-
-    .section-title h2 {
-      font-size: 1.8rem;
-      color: var(--text-main);
-    }
-
-    .section-title p {
-      color: var(--text-muted);
+    .bio {
       font-size: 0.95rem;
+      color: var(--text-main);
+      border-left: 2px solid var(--border);
+      padding-left: 1rem;
+      margin-bottom: 2rem;
     }
 
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: 25px;
+    /* Categoria Filtro */
+    .filter-title {
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 0.8rem;
     }
 
-    .card {
-      background-color: var(--bg-card);
+    .filter-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+    .btn-filter {
+      background: transparent;
       border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 30px;
+      color: var(--text-muted);
+      padding: 0.4rem 0.8rem;
+      font-size: 0.8rem;
+      font-family: var(--font-mono);
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .btn-filter:hover,
+    .btn-filter.active {
+      background: var(--text-main);
+      color: var(--bg);
+      border-color: var(--text-main);
+    }
+
+    /* ==========================================================================
+       GRID DE COMPETÊNCIAS (COLUNA DA DIREITA)
+       ========================================================================== */
+    .section-title {
+      font-family: var(--font-mono);
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: var(--accent);
+      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .section-title::after {
+      content: "";
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    .skills-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
+    }
+
+    @media (min-width: 550px) {
+      .skills-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    .skill-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      padding: 1.5rem;
+      position: relative;
       transition: transform 0.2s ease, border-color 0.2s ease;
     }
 
-    .card:hover {
-      transform: translateY(-4px);
+    .skill-card:hover {
+      transform: translateY(-3px);
       border-color: var(--accent);
     }
 
-    .card-icon {
-      width: 42px;
-      height: 42px;
-      background: rgba(37, 99, 235, 0.15);
-      color: var(--accent);
-      border-radius: 8px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.2rem;
-      margin-bottom: 20px;
-    }
-
-    .card h3 {
-      font-size: 1.2rem;
-      margin-bottom: 10px;
-      color: var(--text-main);
-    }
-
-    .card p {
+    .skill-number {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
       color: var(--text-muted);
-      font-size: 0.92rem;
-      line-height: 1.5;
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
     }
 
-    /* Architecture Highlight */
-    .arch-box {
-      background: linear-gradient(180deg, var(--bg-card) 0%, var(--bg-dark) 100%);
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 40px;
-      margin: 40px 0 80px;
-      text-align: center;
+    .skill-category-tag {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 0.5rem;
+      display: block;
     }
 
-    .arch-tags {
+    .skill-name {
+      font-size: 1.2rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+    }
+
+    .skill-desc {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-bottom: 1rem;
+    }
+
+    /* Tag Cloud das tecnologias específicas dentro do card */
+    .sub-skills {
       display: flex;
       flex-wrap: wrap;
-      gap: 10px;
-      justify-content: center;
-      margin-top: 20px;
+      gap: 0.4rem;
     }
 
-    .tech-tag {
-      background: rgba(255, 255, 255, 0.05);
+    .sub-tag {
+      font-size: 0.75rem;
+      background: rgba(255, 255, 255, 0.04);
       border: 1px solid var(--border);
-      padding: 6px 14px;
-      border-radius: 6px;
-      font-size: 0.85rem;
-      color: var(--text-muted);
-    }
-
-    /* Footer */
-    footer {
-      border-top: 1px solid var(--border);
-      padding: 30px 0;
-      text-align: center;
-      color: var(--text-muted);
-      font-size: 0.85rem;
-    }
-
-    @media (max-width: 768px) {
-      .hero h1 { font-size: 2rem; }
-      .btn-group { flex-direction: column; }
+      padding: 0.1rem 0.4rem;
+      border-radius: 2px;
     }
   </style>
 </head>
 <body>
 
-  <header>
-    <div class="container nav-container">
-      <div class="logo">
-        📌 Mural<span>Acadêmico</span>
-      </div>
-      <div class="badge">Projeto Web 2026.2</div>
-    </div>
-  </header>
-
-  <section class="hero">
-    <div class="container">
-      <h1>Centralização e Transparência Comunicação Campus</h1>
-      <p>
-        Uma plataforma moderna e Serverless desenvolvida para simplificar o acesso a avisos institucionais e otimizar o registro de ocorrências na universidade.
+  <div class="container">
+    <header>
+      <span class="badge">Disponível para Projetos</span>
+      <h1>Nattan Ferreira</h1>
+      <p class="subtitle">Engenheiro de computação</p>
+      
+      <p class="bio">
+        Especializado na construção de sistemas eficientes, arquiteturas modernas de software e desenvolvimento de interfaces robustas.
       </p>
-      <div class="btn-group">
-        <a href="#funcionalidades" class="btn btn-primary">Ver Funcionalidades</a>
-        <a href="https://github.com/nattanflopes/web-2026-2-NATTANFERREIRALOPES" target="_blank" class="btn btn-secondary">Repositório GitHub ↗</a>
+
+      <p class="filter-title">Filtrar Áreas</p>
+      <div class="filter-buttons">
+        <button class="btn-filter active" data-filter="all">Todos</button>
+        <button class="btn-filter" data-filter="tech">Tech</button>
+        <button class="btn-filter" data-filter="hardware">Embedded</button>
+        <button class="btn-filter" data-filter="tools">Ferramentas</button>
       </div>
-    </div>
-  </section>
+    </header>
 
-  <section class="features" id="funcionalidades">
-    <div class="container">
-      <div class="section-title">
-        <h2>Principais Funcionalidades</h2>
-        <p>Projetado para atender às necessidades de discentes, docentes e técnicos.</p>
+    <main>
+      <div class="section-title">Competências & Especialidades</div>
+
+      <div class="skills-grid" id="skills-container">
+        
+        <article class="skill-card" data-category="tech">
+          <span class="skill-number">01</span>
+          <span class="skill-category-tag">Tech</span>
+          <h2 class="skill-name">Desenvolvimento Web</h2>
+          <p class="skill-desc">Criação de aplicações web modernas, responsivas e focadas na experiência do usuário e performance.</p>
+          <div class="sub-skills">
+            <span class="sub-tag">HTML5 / CSS3</span>
+            <span class="sub-tag">JavaScript</span>
+            <span class="sub-tag">React / Next.js</span>
+            <span class="sub-tag">Tailwind CSS</span>
+          </div>
+        </article>
+
+        <article class="skill-card" data-category="tech">
+          <span class="skill-number">02</span>
+          <span class="skill-category-tag">Tech</span>
+          <h2 class="skill-name">Backend & APIs</h2>
+          <p class="skill-desc">Construção de rotas, microsserviços, integração de banco de dados e regras de negócio escaláveis.</p>
+          <div class="sub-skills">
+            <span class="sub-tag">Python</span>
+            <span class="sub-tag">Flask</span>
+            <span class="sub-tag">REST APIs</span>
+            <span class="sub-tag">SQLite</span>
+          </div>
+        </article>
+
+        <article class="skill-card" data-category="hardware">
+          <span class="skill-number">03</span>
+          <span class="skill-category-tag">Embedded</span>
+          <h2 class="skill-name">Sistemas Embarcados</h2>
+          <p class="skill-desc">Programação de microcontroladores, integração de periféricos, atuadores e sensores de campo.</p>
+          <div class="sub-skills">
+            <span class="sub-tag">ESP32</span>
+            <span class="sub-tag">C / C++</span>
+            <span class="sub-tag">Arduino IDE</span>
+            <span class="sub-tag">IoT</span>
+          </div>
+        </article>
+
+        <article class="skill-card" data-category="tools">
+          <span class="skill-number">04</span>
+          <span class="skill-category-tag">Ferramentas</span>
+          <h2 class="skill-name">Ambiente & DevOps</h2>
+          <p class="skill-desc">Controle de versão, gerenciamento de ambientes Linux e pipelines simples de publicação.</p>
+          <div class="sub-skills">
+            <span class="sub-tag">Git / GitHub</span>
+            <span class="sub-tag">Linux</span>
+            <span class="sub-tag">Fedora / Ubuntu</span>
+            <span class="sub-tag">AWS</span>
+          </div>
+        </article>
+
       </div>
+    </main>
+  </div>
 
-      <div class="grid">
-        <div class="card">
-          <div class="card-icon">📢</div>
-          <h3>Mural de Avisos Unificado</h3>
-          <p>Acesse comunicados institucionais, edital de ensino e avisos urgentes categorizados em um único feed em tempo real.</p>
-        </div>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const filterButtons = document.querySelectorAll('.btn-filter');
+      const skillCards = document.querySelectorAll('.skill-card');
 
-        <div class="card">
-          <div class="card-icon">🛠️</div>
-          <h3>Registro de Ocorrências</h3>
-          <p>Relate problemas operacionais ou de infraestrutura nos blocos do campus diretamente para a administração responsável.</p>
-        </div>
+      filterButtons.forEach(button => {
+        button.addEventListener('click', () => {
+          // Atualiza botão ativo
+          filterButtons.forEach(btn => btn.classList.remove('active'));
+          button.classList.add('active');
 
-        <div class="card">
-          <div class="card-icon">🔎</div>
-          <h3>Filtros por Categoria e Bloco</h3>
-          <p>Encontre rapidamente informações específicas utilizando pesquisas por palavra-chave, bloco do campus ou tipo de evento.</p>
-        </div>
+          const filterValue = button.getAttribute('data-filter');
 
-        <div class="card">
-          <div class="card-icon">📂</div>
-          <h3>Anexo de Documentos</h3>
-          <p>Download direto de edital em PDF e upload de comprovantes ou fotos de apoio integrados ao armazenamento em nuvem.</p>
-        </div>
-
-        <div class="card">
-          <div class="card-icon">🔐</div>
-          <h3>Controle de Acesso por Perfil</h3>
-          <p>Níveis de permissão diferenciados para leitores (discentes) e publicadores/administradores (docentes e técnicos).</p>
-        </div>
-
-        <div class="card">
-          <div class="card-icon">📊</div>
-          <h3>Acompanhamento de Status</h3>
-          <p>Acompanhe a resolução das solicitações registradas em tempo real (Aberta, Em Andamento ou Resolvida).</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <section class="container">
-    <div class="arch-box">
-      <h2>Infraestrutura 100% Serverless em Nuvem</h2>
-      <p style="color: var(--text-muted); margin-top: 8px;">Desenvolvido com foco em alta disponibilidade, baixo custo e escalabilidade na AWS.</p>
-      <div class="arch-tags">
-        <span class="tech-tag">AWS Lambda</span>
-        <span class="tech-tag">Amazon API Gateway</span>
-        <span class="tech-tag">Amazon DynamoDB</span>
-        <span class="tech-tag">Amazon S3</span>
-        <span class="tech-tag">CloudFront</span>
-      </div>
-    </div>
-  </section>
-
-  <footer>
-    <div class="container">
-      <p>Projeto Final da Disciplina de Desenvolvimento Web — UFERSA (2026.2)</p>
-      <p style="margin-top: 5px; color: #64748b;">Mantido por Nattan Ferreira Lopes</p>
-    </div>
-  </footer>
-
+          // Filtra os cards
+          skillCards.forEach(card => {
+            const cardCategory = card.getAttribute('data-category');
+            if (filterValue === 'all' || filterValue === cardCategory) {
+              card.style.display = 'block';
+            } else {
+              card.style.display = 'none';
+            }
+          });
+        });
+      });
+    });
+  </script>
 </body>
 </html>
