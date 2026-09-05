@@ -2,52 +2,60 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
-  
-  <!-- DADOS ESTRUTURADOS GOOGLE (SCHEMA.ORG - PERSON) -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mural Acadêmico | Gerenciador de Avisos e Ocorrências</title>
+
+  <!-- DADOS ESTRUTURADOS GOOGLE (SCHEMA.ORG - FAQPAGE PARA RICH RESULTS) -->
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
-    "@type": "Person",
-    "name": "Nattan Ferreira Lopes",
-    "jobTitle": "Engenheiro de Computação",
-    "alumniOf": [
+    "@type": "FAQPage",
+    "mainEntity": [
       {
-        "@type": "CollegeOrUniversity",
-        "name": "Universidade Federal Rural do Semi-Árido",
-        "alternateName": "UFERSA"
+        "@type": "Question",
+        "name": "Qual é o objetivo principal do Gerenciador de Avisos e Ocorrências Acadêmicas?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "O projeto visa centralizar a comunicação de avisos institucionais em um mural digital unificado, eliminando a perda de prazos e oferecendo um canal estruturado para o registro de ocorrências de infraestrutura no campus."
+        }
       },
       {
-        "@type": "EducationalOrganization",
-        "name": "Instituto Federal do Rio Grande do Norte",
-        "alternateName": "IFRN"
+        "@type": "Question",
+        "name": "Quais perfis de usuário são atendidos pela plataforma?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "A plataforma atende Administradores/Publicadores (docentes e técnicos-administrativos) para gestão de avisos e demandas, e Leitores/Solicitantes (discentes) para consulta e abertura de ocorrências."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Como a arquitetura Serverless na AWS reduz os custos do projeto?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "A solução utiliza AWS Lambda, API Gateway, DynamoDB e Amazon S3. Como não existem servidores dedicados rodando 24/7, a cobrança ocorre estritamente por uso, enquadrando-se na camada gratuita (Free Tier) durante o desenvolvimento."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Como é realizado o armazenamento e download de anexos (PDFs e imagens)?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Os arquivos de editais e fotos de ocorrências são armazenados no Amazon S3, e suas URLs de acesso seguro são vinculadas aos registros salvos no banco NoSQL Amazon DynamoDB."
+        }
       }
-    ],
-    "knowsAbout": [
-      "Sistemas Embarcados",
-      "Internet das Coisas (IoT)",
-      "ESP32",
-      "Desenvolvimento Web",
-      "Python",
-      "React",
-      "Next.js"
-    ],
-    "url": "https://www.nattan.mestre.web.ufersa.dev.br"
+    ]
   }
   </script>
 
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Meu Portfólio & Competências</title>
   <style>
-    /* ==========================================================================
-       RESET & VARIÁVEIS DE DESIGN (TEMA ESCURO EDITORIAL / ASIMÉTRICO)
-       ========================================================================== */
     :root {
-      --bg: #0d0e12;
-      --card-bg: #151821;
-      --accent: #ff4d2d; /* Laranja editorial de alto contraste */
-      --text-main: #f0f2f5;
-      --text-muted: #8b92a5;
-      --border: #232736;
+      --bg: #0f172a;
+      --card-bg: #1e293b;
+      --accent: #38bdf8;
+      --primary: #2563eb;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --border: #334155;
       --font-mono: "Courier New", Courier, monospace;
       --font-sans: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     }
@@ -62,120 +70,86 @@
       background-color: var(--bg);
       color: var(--text-main);
       font-family: var(--font-sans);
-      line-height: 1.5;
-      padding: 3rem 1.5rem;
-      min-height: 100vh;
+      line-height: 1.6;
     }
 
-    /* Layout Assimétrico */
     .container {
       max-width: 1000px;
       margin: 0 auto;
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 3rem;
+      padding: 0 20px;
     }
 
-    @media (min-width: 850px) {
-      .container {
-        grid-template-columns: 320px 1fr;
-      }
-    }
-
-    /* ==========================================================================
-       CABEÇALHO & PERFIL (COLUNA DA ESQUERDA)
-       ========================================================================== */
+    /* Header */
     header {
+      border-bottom: 1px solid var(--border);
+      padding: 20px 0;
+      background: rgba(15, 23, 42, 0.8);
+      backdrop-filter: blur(10px);
       position: sticky;
-      top: 3rem;
-      height: fit-content;
+      top: 0;
+      z-index: 100;
+    }
+
+    .nav-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      font-size: 1.25rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .logo span {
+      color: var(--accent);
     }
 
     .badge {
-      display: inline-block;
-      font-family: var(--font-mono);
-      font-size: 0.75rem;
-      text-transform: uppercase;
+      background: rgba(56, 189, 248, 0.1);
       color: var(--accent);
-      border: 1px solid var(--accent);
-      padding: 0.2rem 0.6rem;
-      margin-bottom: 1rem;
-      letter-spacing: 1px;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      border: 1px solid rgba(56, 189, 248, 0.2);
     }
 
-    h1 {
+    /* Hero Section */
+    .hero {
+      padding: 60px 0 40px;
+      text-align: center;
+    }
+
+    .hero h1 {
       font-size: 2.5rem;
-      font-weight: 800;
-      line-height: 1.1;
-      letter-spacing: -1px;
-      margin-bottom: 0.5rem;
+      font-weight: 700;
+      margin-bottom: 15px;
+      background: linear-gradient(180deg, #fff 0%, var(--text-muted) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
     }
 
-    .subtitle {
+    .hero p {
+      font-size: 1.1rem;
       color: var(--text-muted);
-      font-size: 1rem;
-      margin-bottom: 1.5rem;
+      max-width: 650px;
+      margin: 0 auto 30px;
     }
 
-    .bio {
-      font-size: 0.95rem;
-      color: var(--text-main);
-      border-left: 2px solid var(--border);
-      padding-left: 1rem;
-      margin-bottom: 2rem;
-    }
-
-    /* Categoria Filtro */
-    .filter-title {
-      font-family: var(--font-mono);
-      font-size: 0.8rem;
-      text-transform: uppercase;
-      color: var(--text-muted);
-      margin-bottom: 0.8rem;
-    }
-
-    .filter-buttons {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.5rem;
-    }
-
-    .btn-filter {
-      background: transparent;
-      border: 1px solid var(--border);
-      color: var(--text-muted);
-      padding: 0.4rem 0.8rem;
-      font-size: 0.8rem;
-      font-family: var(--font-mono);
-      cursor: pointer;
-      transition: all 0.2s ease;
-    }
-
-    .btn-filter:hover,
-    .btn-filter.active {
-      background: var(--text-main);
-      color: var(--bg);
-      border-color: var(--text-main);
-    }
-
-    /* ==========================================================================
-       GRID DE COMPETÊNCIAS & FAQ (COLUNA DA DIREITA)
-       ========================================================================== */
+    /* Features Grid */
     .section-title {
       font-family: var(--font-mono);
       font-size: 0.9rem;
       text-transform: uppercase;
       letter-spacing: 2px;
       color: var(--accent);
-      margin-bottom: 1.5rem;
-      margin-top: 2.5rem;
+      margin: 40px 0 20px;
       display: flex;
       align-items: center;
       gap: 0.5rem;
-    }
-
-    .section-title:first-of-type {
-      margin-top: 0;
     }
 
     .section-title::after {
@@ -185,229 +159,176 @@
       background: var(--border);
     }
 
-    .skills-grid {
+    .grid {
       display: grid;
-      grid-template-columns: 1fr;
-      gap: 1.5rem;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
     }
 
-    @media (min-width: 550px) {
-      .skills-grid {
-        grid-template-columns: repeat(2, 1fr);
-      }
-    }
-
-    .skill-card {
-      background: var(--card-bg);
+    .card {
+      background-color: var(--card-bg);
       border: 1px solid var(--border);
-      padding: 1.5rem;
-      position: relative;
-      transition: transform 0.2s ease, border-color 0.2s ease;
+      border-radius: 8px;
+      padding: 24px;
     }
 
-    .skill-card:hover {
-      transform: translateY(-3px);
-      border-color: var(--accent);
+    .card h3 {
+      font-size: 1.1rem;
+      margin-bottom: 8px;
+      color: var(--text-main);
     }
 
-    .skill-number {
-      font-family: var(--font-mono);
-      font-size: 0.75rem;
+    .card p {
       color: var(--text-muted);
-      position: absolute;
-      top: 1rem;
-      right: 1rem;
+      font-size: 0.9rem;
     }
 
-    .skill-category-tag {
-      font-family: var(--font-mono);
-      font-size: 0.7rem;
-      text-transform: uppercase;
-      color: var(--accent);
-      margin-bottom: 0.5rem;
-      display: block;
-    }
-
-    .skill-name {
-      font-size: 1.2rem;
-      font-weight: 700;
-      margin-bottom: 0.5rem;
-    }
-
-    .skill-desc {
-      font-size: 0.85rem;
-      color: var(--text-muted);
-      margin-bottom: 1rem;
-    }
-
-    /* Tag Cloud das tecnologias específicas dentro do card */
-    .sub-skills {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.4rem;
-    }
-
-    .sub-tag {
-      font-size: 0.75rem;
-      background: rgba(255, 255, 255, 0.04);
-      border: 1px solid var(--border);
-      padding: 0.1rem 0.4rem;
-      border-radius: 2px;
-    }
-
-    /* Estilos da Seção FAQ */
+    /* FAQ Component */
     .faq-list {
       display: flex;
       flex-direction: column;
-      gap: 1rem;
+      gap: 12px;
+      margin-bottom: 60px;
     }
 
     .faq-item {
       background: var(--card-bg);
       border: 1px solid var(--border);
-      padding: 1.25rem;
+      border-radius: 6px;
+      overflow: hidden;
     }
 
-    .faq-question {
-      font-size: 1rem;
-      font-weight: 700;
+    .faq-item summary {
+      padding: 16px 20px;
+      font-size: 0.95rem;
+      font-weight: 600;
       color: var(--text-main);
-      margin-bottom: 0.5rem;
+      cursor: pointer;
+      list-style: none;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .faq-item summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .faq-item summary::after {
+      content: "+";
+      font-family: var(--font-mono);
+      font-size: 1.2rem;
+      color: var(--accent);
+    }
+
+    .faq-item details[open] summary::after {
+      content: "−";
     }
 
     .faq-answer {
-      font-size: 0.88rem;
+      padding: 0 20px 16px 20px;
+      font-size: 0.9rem;
       color: var(--text-muted);
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+      margin-top: 4px;
+      padding-top: 12px;
+    }
+
+    /* Footer */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 30px 0;
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 0.85rem;
     }
   </style>
 </head>
 <body>
 
-  <div class="container">
-    <header>
-      <span class="badge">Disponível para Projetos</span>
-      <h1>Nattan Ferreira</h1>
-      <p class="subtitle">Engenheiro de computação</p>
-      
-      <p class="bio">
-        Especializado na construção de sistemas eficientes, arquiteturas modernas de software e desenvolvimento de interfaces robustas.
+  <header>
+    <div class="container nav-container">
+      <div class="logo">
+        📌 Mural<span>Acadêmico</span>
+      </div>
+      <div class="badge">Avaliação 03 - Projeto Final</div>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="hero">
+      <h1>Gerenciador de Avisos e Ocorrências Acadêmicas</h1>
+      <p>
+        Plataforma web serverless para centralização de comunicados institucionais e registro de ocorrências operacionais do campus.
       </p>
+    </section>
 
-      <p class="filter-title">Filtrar Áreas</p>
-      <div class="filter-buttons">
-        <button class="btn-filter active" data-filter="all">Todos</button>
-        <button class="btn-filter" data-filter="tech">Tech</button>
-        <button class="btn-filter" data-filter="hardware">Embedded</button>
-        <button class="btn-filter" data-filter="tools">Ferramentas</button>
-      </div>
-    </header>
+    <div class="section-title">Funcionalidades do Projeto</div>
 
-    <main>
-      <div class="section-title">Competências & Especialidades</div>
-
-      <div class="skills-grid" id="skills-container">
-        
-        <article class="skill-card" data-category="tech">
-          <span class="skill-number">01</span>
-          <span class="skill-category-tag">Tech</span>
-          <h2 class="skill-name">Desenvolvimento Web</h2>
-          <p class="skill-desc">Criação de aplicações web modernas, responsivas e focadas na experiência do usuário e performance.</p>
-          <div class="sub-skills">
-            <span class="sub-tag">HTML5 / CSS3</span>
-            <span class="sub-tag">JavaScript</span>
-            <span class="sub-tag">React / Next.js</span>
-            <span class="sub-tag">Tailwind CSS</span>
-          </div>
-        </article>
-
-        <article class="skill-card" data-category="tech">
-          <span class="skill-number">02</span>
-          <span class="skill-category-tag">Tech</span>
-          <h2 class="skill-name">Backend & APIs</h2>
-          <p class="skill-desc">Construção de rotas, microsserviços, integração de banco de dados e regras de negócio escaláveis.</p>
-          <div class="sub-skills">
-            <span class="sub-tag">Python</span>
-            <span class="sub-tag">Flask</span>
-            <span class="sub-tag">REST APIs</span>
-            <span class="sub-tag">SQLite</span>
-          </div>
-        </article>
-
-        <article class="skill-card" data-category="hardware">
-          <span class="skill-number">03</span>
-          <span class="skill-category-tag">Embedded</span>
-          <h2 class="skill-name">Sistemas Embarcados</h2>
-          <p class="skill-desc">Programação de microcontroladores, integração de periféricos, atuadores e sensores de campo.</p>
-          <div class="sub-skills">
-            <span class="sub-tag">ESP32</span>
-            <span class="sub-tag">C / C++</span>
-            <span class="sub-tag">Arduino IDE</span>
-            <span class="sub-tag">IoT</span>
-          </div>
-        </article>
-
-        <article class="skill-card" data-category="tools">
-          <span class="skill-number">04</span>
-          <span class="skill-category-tag">Ferramentas</span>
-          <h2 class="skill-name">Ambiente & DevOps</h2>
-          <p class="skill-desc">Controle de versão, gerenciamento de ambientes Linux e pipelines simples de publicação.</p>
-          <div class="sub-skills">
-            <span class="sub-tag">Git / GitHub</span>
-            <span class="sub-tag">Linux</span>
-            <span class="sub-tag">Fedora / Ubuntu</span>
-            <span class="sub-tag">AWS</span>
-          </div>
-        </article>
-
+    <section class="grid">
+      <div class="card">
+        <h3>📢 Mural Centralizado</h3>
+        <p>Publicação e consulta de avisos organizados por categorias como Ensino, Editais e Infraestrutura.</p>
       </div>
 
-      <!-- SEÇÃO VISÍVEL DE FAQ -->
-      <div class="section-title">Perguntas Frequentes</div>
+      <div class="card">
+        <h3>🛠️ Registro de Ocorrências</h3>
+        <p>Canal direto para relatar problemas no campus com acompanhamento de status em tempo real.</p>
+      </div>
 
-      <section class="faq-list">
-        <article class="faq-item">
-          <h3 class="faq-question">Quais são as principais competências técnicas de Nattan Ferreira Lopes?</h3>
-          <p class="faq-answer">Nattan é graduando em Engenharia de Computação pela UFERSA e possui formação técnica em TI pelo IFRN. Tem experiência no desenvolvimento de sistemas embarcados e IoT (ESP32, Arduino, sensores, comunicação celular), além do desenvolvimento web full stack utilizando Python (Flask), JavaScript (React, Next.js, Tailwind CSS), C, SQLite e controle de versão com Git/GitHub.</p>
-        </article>
+      <div class="card">
+        <h3>📂 Anexos e Documentos</h3>
+        <p>Upload e download seguro de editais e comprovantes em PDF integrados diretamente ao Amazon S3.</p>
+      </div>
 
-        <article class="faq-item">
-          <h3 class="faq-question">Quais projetos foram desenvolvidos por Nattan?</h3>
-          <p class="faq-answer">Entre os projetos desenvolvidos destacam-se a plataforma web 'Extensão ODS UFERSA' (Next.js, Tailwind CSS, AWS Amplify), o aplicativo de gestão financeira 'SGM-Mercearia' (Python, Flask, SQLite) e projetos de hardware/IoT com ESP32 e integração com a nuvem.</p>
-        </article>
+      <div class="card">
+        <h3>🔐 Perfis de Acesso</h3>
+        <p>Permissões diferenciadas para Administradores (Docentes/Técnicos) e Leitores (Discentes).</p>
+      </div>
+    </section>
 
-        <article class="faq-item">
-          <h3 class="faq-question">Qual é a formação acadêmica de Nattan Ferreira Lopes?</h3>
-          <p class="faq-answer">Nattan cursou o técnico em Tecnologia da Informação no IFRN e cursa Engenharia de Computação na Universidade Federal Rural do Semi-Árido (UFERSA).</p>
-        </article>
-      </section>
-    </main>
-  </div>
+    <!-- SEÇÃO DE FAQ BASEADA NO PROJETO FINAL -->
+    <div class="section-title">Perguntas Frequentes (FAQ)</div>
 
-  <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      const filterButtons = document.querySelectorAll('.btn-filter');
-      const skillCards = document.querySelectorAll('.skill-card');
+    <section class="faq-list">
+      
+      <div class="faq-item">
+        <details open>
+          <summary>Qual é o objetivo principal do Gerenciador de Avisos e Ocorrências Acadêmicas?</summary>
+          <p class="faq-answer">O projeto visa centralizar a comunicação de avisos institucionais em um mural digital unificado, eliminando a perda de prazos e oferecendo um canal estruturado para o registro de ocorrências de infraestrutura no campus.</p>
+        </details>
+      </div>
 
-      filterButtons.forEach(button => {
-        button.addEventListener('click', () => {
-          // Atualiza botão ativo
-          filterButtons.forEach(btn => btn.classList.remove('active'));
-          button.classList.add('active');
+      <div class="faq-item">
+        <details>
+          <summary>Quais perfis de usuário são atendidos pela plataforma?</summary>
+          <p class="faq-answer">A plataforma atende Administradores/Publicadores (docentes e técnicos-administrativos) para gestão de avisos e demandas, e Leitores/Solicitantes (discentes) para consulta e abertura de ocorrências.</p>
+        </details>
+      </div>
 
-          const filterValue = button.getAttribute('data-filter');
+      <div class="faq-item">
+        <details>
+          <summary>Como a arquitetura Serverless na AWS reduz os custos do projeto?</summary>
+          <p class="faq-answer">A solução utiliza AWS Lambda, API Gateway, DynamoDB e Amazon S3. Como não existem servidores dedicados rodando 24/7, a cobrança ocorre estritamente por uso, enquadrando-se na camada gratuita (Free Tier) durante o desenvolvimento.</p>
+        </details>
+      </div>
 
-          // Filtra os cards
-          skillCards.forEach(card => {
-            const cardCategory = card.getAttribute('data-category');
-            if (filterValue === 'all' || filterValue === cardCategory) {
-              card.style.display = 'block';
-            } else {
-              card.style.display = 'none';
-            }
-          });
-        });
-      });
-    });
-  </script>
+      <div class="faq-item">
+        <details>
+          <summary>Como é realizado o armazenamento e download de anexos (PDFs e imagens)?</summary>
+          <p class="faq-answer">Os arquivos de editais e fotos de ocorrências são armazenados no Amazon S3, e suas URLs de acesso seguro são vinculadas aos registros salvos no banco NoSQL Amazon DynamoDB.</p>
+        </details>
+      </div>
+
+    </section>
+  </main>
+
+  <footer>
+    <div class="container">
+      <p>Desenvolvimento Web 2026.2 — UFERSA</p>
+      <p style="margin-top: 4px; color: #64748b;">Repositório: web-2026-2-NATTANFERREIRALOPES</p>
+    </div>
+  </footer>
+
 </body>
 </html>
