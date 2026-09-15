@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Quadro — Identidade Visual e Telas</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300..900&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap');
+
+:root{
+  --verde: #1F3B32;
+  --verde-2: #274A3F;
+  --cortica: #EDE1CB;
+  --cortica-2: #E3D4B4;
+  --giz: #FAF7F0;
+  --vermelho: #C1443A;
+  --tinta: #35577A;
+  --texto: #22201B;
+  --texto-suave: #5A554A;
+  --linha: rgba(34,32,27,0.14);
+}
+*{box-sizing:border-box;}
+body{
+  margin:0;
+  background: var(--cortica);
+  color: var(--texto);
+  font-family:'IBM Plex Sans', sans-serif;
+  -webkit-font-smoothing:antialiased;
+}
+h1,h2,h3,.serif{ font-family:'Fraunces', serif; }
+
+/* ---------- top nav ---------- */
+.tabbar{
+  position:sticky; top:0; z-index:50;
+  display:flex; gap:2px; align-items:flex-end;
+  padding: 18px 28px 0;
+  background: var(--cortica);
+  border-bottom: 2px solid var(--verde);
+  overflow-x:auto;
+}
+.tab{
+  font-family:'IBM Plex Sans'; font-weight:600; font-size:13.5px;
+  padding:11px 18px 10px; cursor:pointer; white-space:nowrap;
+  background: var(--cortica-2);
+  border:2px solid var(--verde); border-bottom:none;
+  border-radius:8px 8px 0 0;
+  color: var(--texto-suave);
+  transform: translateY(4px);
+  transition: transform .15s ease, background .15s ease, color .15s ease;
+}
+.tab.active{
+  background: var(--giz); color: var(--verde); transform: translateY(0);
+}
+.tab:hover:not(.active){ background:#F1E6CC; }
+
+.screen{ display:none; }
+.screen.active{ display:block; }
+
+/* ================= IDENTITY SCREEN ================= */
+.identity{ max-width:980px; margin:0 auto; padding:56px 28px 90px; }
+.brand-row{ display:flex; align-items:center; gap:22px; margin-bottom:10px; }
+.pin-mark{ flex-shrink:0; }
+.brand-row h1{ font-size:56px; font-weight:700; margin:0; letter-spacing:-0.01em; color:var(--verde); }
+.tagline{ font-size:16px; color:var(--texto-suave); margin:2px 0 0 4px; }
+.lede{
+  font-size:17px; line-height:1.65; color:var(--texto); max-width:640px;
+  margin: 26px 0 48px; padding-top:22px; border-top:1px solid var(--linha);
+}
+
+.block-title{ font-size:12.5px; font-weight:600; color:var(--texto-suave); margin: 0 0 14px; }
+
+.swatches{ display:grid; grid-template-columns:repeat(5,1fr); gap:14px; margin-bottom:52px; }
+.swatch{ border-radius:10px; overflow:hidden; border:1px solid var(--linha); background:var(--giz); }
+.swatch .fill{ height:78px; }
+.swatch .label{ padding:10px 12px; font-size:12px; }
+.swatch .label b{ display:block; font-size:12.5px; margin-bottom:2px; }
+.swatch .label span{ font-family:'IBM Plex Mono'; font-size:11px; color:var(--texto-suave); }
+
+.type-row{ display:flex; gap:40px; margin-bottom:52px; flex-wrap:wrap; }
+.type-card{ flex:1; min-width:280px; background:var(--giz); border:1px solid var(--linha); border-radius:12px; padding:26px 28px; }
+.type-card .specimen{ font-family:'Fraunces'; font-size:44px; font-weight:600; color:var(--verde); margin:6px 0 10px; line-height:1; }
+.type-card.ui .specimen{ font-family:'IBM Plex Sans'; font-weight:600; font-size:30px; color:var(--tinta); }
+.type-card p{ font-size:13px; color:var(--texto-suave); line-height:1.6; margin:0; }
+
+.principles{ display:grid; grid-template-columns:repeat(3,1fr); gap:18px; margin-bottom:20px; }
+.principle{ background:var(--giz); border:1px solid var(--linha); border-radius:12px; padding:20px 22px; }
+.principle .num{ font-family:'IBM Plex Mono'; font-size:12px; color:var(--vermelho); margin-bottom:8px; }
+.principle h3{ font-size:16px; margin:0 0 8px; color:var(--verde); }
+.principle p{ font-size:13px; line-height:1.55; color:var(--texto-suave); margin:0; }
+
+/* ================= APP FRAME ================= */
+.stage{ padding:44px 28px 100px; display:flex; justify-content:center; }
+.frame{
+  width:100%; max-width:1040px;
+  background: var(--giz);
+  border-radius:14px;
+  border:1px solid var(--linha);
+  box-shadow: 0 24px 60px -30px rgba(31,59,50,0.45);
+  overflow:hidden;
+}
+.frame-bar{
+  display:flex; align-items:center; gap:8px;
+  padding:12px 16px; background:var(--verde); color:var(--giz);
+}
+.frame-bar .dot{ width:9px;height:9px;border-radius:50%; background:rgba(250,247,240,0.35); }
+.frame-bar .url{
+  margin-left:10px; font-family:'IBM Plex Mono'; font-size:11.5px;
+  background:rgba(250,247,240,0.12); padding:4px 12px; border-radius:6px; color:rgba(250,247,240,0.85);
+}
+
+/* app chrome */
+.appbar{
+  display:flex; align-items:center; justify-content:space-between;
+  padding:16px 28px; background:var(--verde); color:var(--giz);
+}
+.appbar .brand{ display:flex; align-items:center; gap:10px; font-family:'Fraunces'; font-weight:700; font-size:20px; }
+.appbar .brand svg{ flex-shrink:0; }
+.appbar nav{ display:flex; gap:26px; font-size:13.5px; font-weight:500; }
+.appbar nav a{ color:rgba(250,247,240,0.75); text-decoration:none; }
+.appbar nav a.on{ color:var(--giz); border-bottom:2px solid var(--vermelho); padding-bottom:4px; }
+.appbar .user{ display:flex; align-items:center; gap:8px; font-size:12.5px; }
+.avatar{ width:26px;height:26px;border-radius:50%; background:var(--vermelho); display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:600; }
+
+.body-pad{ padding:26px 28px 40px; background:
+  radial-gradient(circle at 1px 1px, rgba(34,32,27,0.06) 1px, transparent 0) 0 0/16px 16px, var(--cortica-2); }
+
+.page-head{ display:flex; justify-content:space-between; align-items:flex-end; margin-bottom:20px; flex-wrap:wrap; gap:14px; }
+.page-head h2{ font-size:26px; margin:0; color:var(--verde); }
+.page-head p{ margin:4px 0 0; font-size:13px; color:var(--texto-suave); }
+
+.searchbar{
+  display:flex; align-items:center; gap:10px;
+  background:var(--giz); border:1.5px solid var(--verde); border-radius:10px;
+  padding:10px 14px; min-width:280px; font-size:13.5px; color:var(--texto-suave);
+}
+
+.catrow{ display:flex; gap:8px; margin:18px 0 22px; flex-wrap:wrap; }
+.cat{
+  font-size:12.5px; font-weight:600; padding:7px 14px; border-radius:20px;
+  border:1.5px solid var(--verde); color:var(--verde); background:transparent; cursor:default;
+}
+.cat.on{ background:var(--verde); color:var(--giz); }
+
+.grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:20px; }
+.card{
+  background:var(--giz); border:1px solid var(--linha); border-radius:4px; padding:18px 18px 16px;
+  box-shadow:0 10px 18px -14px rgba(34,32,27,0.5);
+  position:relative;
+}
+.card:nth-child(odd){ transform: rotate(-0.6deg); }
+.card:nth-child(even){ transform: rotate(0.5deg); }
+.card::before{
+  content:''; position:absolute; top:-7px; left:22px; width:12px; height:12px; border-radius:50%;
+  background:var(--vermelho); box-shadow:0 2px 3px rgba(0,0,0,0.3);
+}
+.card .tag{ font-size:10.5px; font-weight:600; color:var(--tinta); margin-bottom:8px; display:block; }
+.card h4{ font-family:'Fraunces'; font-size:18px; margin:0 0 8px; color:var(--texto); line-height:1.25; }
+.card p{ font-size:12.5px; color:var(--texto-suave); line-height:1.55; margin:0 0 14px; }
+.card .meta{ display:flex; justify-content:space-between; align-items:center; font-size:11px; color:var(--texto-suave); border-top:1px dashed var(--linha); padding-top:10px; }
+.card .pdf{ display:flex; align-items:center; gap:5px; color:var(--vermelho); font-weight:600; }
+
+/* buttons */
+.btn{ font-family:'IBM Plex Sans'; font-weight:600; font-size:13px; border-radius:8px; padding:10px 18px; border:none; cursor:default; }
+.btn-primary{ background:var(--vermelho); color:var(--giz); }
+.btn-ghost{ background:transparent; border:1.5px solid var(--verde); color:var(--verde); }
+.btn-outline-light{ background:var(--giz); border:1.5px solid var(--verde); color:var(--verde); }
+
+/* detail screen */
+.detail-wrap{ display:grid; grid-template-columns: 2fr 1fr; gap:24px; }
+.detail-card{ background:var(--giz); border-radius:6px; border:1px solid var(--linha); padding:30px 32px; }
+.detail-card .tag{ font-size:11px; font-weight:600; color:var(--tinta); }
+.detail-card h2{ font-size:28px; margin:10px 0 6px; color:var(--verde); }
+.detail-card .sub{ font-size:12.5px; color:var(--texto-suave); margin-bottom:22px; }
+.detail-card .content{ font-size:14px; line-height:1.75; color:var(--texto); margin-bottom:24px; }
+.attach{
+  display:flex; align-items:center; gap:12px; background:var(--cortica-2); border:1px dashed var(--verde);
+  border-radius:8px; padding:14px 16px; font-size:13px; font-weight:500; color:var(--verde);
+}
+.side-card{ background:var(--giz); border:1px solid var(--linha); border-radius:6px; padding:20px 22px; margin-bottom:16px; }
+.side-card h5{ font-size:11.5px; font-weight:600; color:var(--texto-suave); margin:0 0 12px; }
+.side-card .row{ display:flex; justify-content:space-between; font-size:12.5px; padding:7px 0; border-bottom:1px solid var(--linha); }
+.side-card .row:last-child{ border-bottom:none; }
+
+/* form screen */
+.form-wrap{ max-width:640px; background:var(--giz); border:1px solid var(--linha); border-radius:8px; padding:32px 36px; margin:0 auto; }
+.field{ margin-bottom:20px; }
+.field label{ display:block; font-size:12.5px; font-weight:600; color:var(--texto); margin-bottom:7px; }
+.field .hint{ font-size:11.5px; color:var(--texto-suave); margin-top:5px; }
+.input, .textarea, .select{
+  width:100%; border:1.5px solid var(--linha); background:var(--cortica); border-radius:7px; padding:11px 13px;
+  font-family:'IBM Plex Sans'; font-size:13.5px; color:var(--texto);
+}
+.textarea{ min-height:90px; resize:none; }
+.pillrow{ display:flex; gap:8px; flex-wrap:wrap; }
+.pill{ font-size:12px; font-weight:600; padding:8px 14px; border-radius:20px; border:1.5px solid var(--linha); color:var(--texto-suave); }
+.pill.sel{ border-color:var(--vermelho); color:var(--vermelho); background:rgba(193,68,58,0.06); }
+.dropzone{ border:1.5px dashed var(--verde); border-radius:8px; padding:22px; text-align:center; font-size:12.5px; color:var(--texto-suave); background:var(--cortica-2); }
+.formactions{ display:flex; justify-content:flex-end; gap:10px; margin-top:26px; }
+
+/* admin table */
+.table{ width:100%; border-collapse:collapse; background:var(--giz); border:1px solid var(--linha); border-radius:6px; overflow:hidden; }
+.table th{ text-align:left; font-size:11px; font-weight:600; color:var(--texto-suave); background:var(--cortica-2); padding:12px 16px; }
+.table td{ font-size:13px; padding:13px 16px; border-top:1px solid var(--linha); color:var(--texto); }
+.status{ font-size:11px; font-weight:600; padding:4px 10px; border-radius:20px; display:inline-block; }
+.status.aberta{ background:rgba(193,68,58,0.12); color:var(--vermelho); }
+.status.andamento{ background:rgba(53,87,122,0.12); color:var(--tinta); }
+.status.resolvida{ background:rgba(31,59,50,0.12); color:var(--verde); }
+.row-actions{ display:flex; gap:8px; }
+.icon-btn{ font-size:11.5px; color:var(--tinta); font-weight:600; }
+
+.note{ font-size:12px; color:var(--texto-suave); text-align:center; padding:30px 0 0; max-width:640px; margin:0 auto; }
+</style>
+</head>
+<body>
+
+<div class="tabbar" id="tabbar">
+  <div class="tab active" data-s="identidade">Identidade Visual</div>
+  <div class="tab" data-s="mural">Mural (Leitor)</div>
+  <div class="tab" data-s="detalhe">Detalhe do Aviso</div>
+  <div class="tab" data-s="ocorrencia">Registrar Ocorrência</div>
+  <div class="tab" data-s="criaraviso">Criar Aviso (Admin)</div>
+  <div class="tab" data-s="painel">Painel Admin</div>
+</div>
+
+<!-- ============ IDENTITY ============ -->
+<section class="screen active" id="identidade">
+  <div class="identity">
+    <div class="brand-row">
+      <svg class="pin-mark" width="52" height="52" viewBox="0 0 52 52">
+        <rect x="4" y="4" width="44" height="44" rx="6" fill="#1F3B32"/>
+        <circle cx="26" cy="20" r="7" fill="#FAF7F0"/>
+        <rect x="24" y="26" width="4" height="16" rx="2" fill="#FAF7F0" transform="rotate(8 26 26)"/>
+        <circle cx="26" cy="20" r="2.6" fill="#C1443A"/>
+      </svg>
+      <div>
+        <h1>Quadro</h1>
+      </div>
+    </div>
+    <p class="tagline">avisos e ocorrências do campus, num só lugar</p>
+
+    <p class="lede">Identidade construída sobre a metáfora do mural físico que o sistema substitui: o quadro de avisos de corredor e o alfinete que fixa um papel. A marca leva esse vocabulário — cortiça, alfinete, ficha — para uma interface digital sóbria e institucional, sem parecer um "app" genérico.</p>
+
+    <p class="block-title">PALETA DE CORES</p>
+    <div class="swatches">
+      <div class="swatch"><div class="fill" style="background:#1F3B32"></div><div class="label"><b>Verde Quadro</b><span>#1F3B32</span></div></div>
+      <div class="swatch"><div class="fill" style="background:#EDE1CB"></div><div class="label"><b>Cortiça</b><span>#EDE1CB</span></div></div>
+      <div class="swatch"><div class="fill" style="background:#FAF7F0"></div><div class="label"><b>Giz</b><span>#FAF7F0</span></div></div>
+      <div class="swatch"><div class="fill" style="background:#C1443A"></div><div class="label"><b>Alfinete</b><span>#C1443A</span></div></div>
+      <div class="swatch"><div class="fill" style="background:#35577A"></div><div class="label"><b>Tinta</b><span>#35577A</span></div></div>
+    </div>
+
+    <p class="block-title">TIPOGRAFIA</p>
+    <div class="type-row">
+      <div class="type-card">
+        <div class="specimen">Aa Gg Qd</div>
+        <p><b>Fraunces</b> — títulos e nome da marca. Serifa com caráter de cartaz de mural impresso; usada só em manchetes e no logótipo, nunca no corpo do texto.</p>
+      </div>
+      <div class="type-card ui">
+        <div class="specimen">Aa Gg Qd</div>
+        <p><b>IBM Plex Sans</b> — interface, formulários e corpo de texto. Traço técnico e institucional, legível em telas densas de dados (tabelas, filtros, status).</p>
+      </div>
+    </div>
+
+    <p class="block-title">PRINCÍPIOS</p>
+    <div class="principles">
+      <div class="principle"><div class="num">01</div><h3>Papel fixado, não cartão flutuante</h3><p>Avisos são fichas levemente rotacionadas com um "alfinete" no topo — não cards uniformes com sombra genérica.</p></div>
+      <div class="principle"><div class="num">02</div><h3>Cor com função</h3><p>O vermelho do alfinete é reservado a urgência e ação (ocorrência aberta, publicar). Azul-tinta é só para links e referência.</p></div>
+      <div class="principle"><div class="num">03</div><h3>Textura de cortiça, não gradiente</h3><p>O fundo pontilhado substitui washes decorativos — remete à superfície física do mural sem enfeite gratuito.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ MURAL PÚBLICO ============ -->
+<section class="screen" id="mural">
+  <div class="stage"><div class="frame">
+    <div class="frame-bar"><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="url">mural.suainstituicao.edu.br</div></div>
+    <div class="appbar">
+      <div class="brand"><svg width="22" height="22" viewBox="0 0 52 52"><rect x="4" y="4" width="44" height="44" rx="6" fill="#FAF7F0"/><circle cx="26" cy="20" r="7" fill="#1F3B32"/><rect x="24" y="26" width="4" height="16" rx="2" fill="#1F3B32" transform="rotate(8 26 26)"/><circle cx="26" cy="20" r="2.6" fill="#C1443A"/></svg>Quadro</div>
+      <nav><a class="on">Mural</a><a>Minhas ocorrências</a><a>Sobre</a></nav>
+      <div class="user"><div class="avatar">LM</div>Luiza Martins</div>
+    </div>
+    <div class="body-pad">
+      <div class="page-head">
+        <div><h2>Mural de avisos</h2><p>42 avisos publicados este semestre</p></div>
+        <div class="searchbar">🔍 Buscar por palavra-chave, bloco ou edital…</div>
+      </div>
+      <div class="catrow">
+        <span class="cat on">Todos</span><span class="cat">Ensino</span><span class="cat">Infraestrutura</span><span class="cat">Editais</span><span class="cat">Eventos</span>
+        <span class="btn btn-ghost" style="margin-left:auto;">+ Registrar ocorrência</span>
+      </div>
+      <div class="grid">
+        <div class="card"><span class="tag">EDITAIS</span><h4>Edital de monitoria 2026.2 publicado</h4><p>Inscrições abertas para 14 vagas de monitoria em disciplinas do ciclo básico. Prazo final dia 28.</p><div class="meta"><span>Bloco C · há 2h</span><span class="pdf">📎 PDF</span></div></div>
+        <div class="card"><span class="tag">INFRAESTRUTURA</span><h4>Manutenção no bloco B — elevador</h4><p>Elevador do bloco B ficará fora de operação entre os dias 16 e 18 para manutenção preventiva.</p><div class="meta"><span>Bloco B · há 5h</span><span></span></div></div>
+        <div class="card"><span class="tag">ENSINO</span><h4>Alteração de prazo — TCC I</h4><p>Data de entrega da proposta de TCC I prorrogada para 30/09 em virtude do recesso acadêmico.</p><div class="meta"><span>Coordenação · há 1 dia</span><span class="pdf">📎 PDF</span></div></div>
+        <div class="card"><span class="tag">EVENTOS</span><h4>Semana de Tecnologia — inscrições</h4><p>Palestras, oficinas e feira de projetos entre 22 e 26/09. Inscrição gratuita para a comunidade.</p><div class="meta"><span>Auditório · há 1 dia</span><span></span></div></div>
+        <div class="card"><span class="tag">INFRAESTRUTURA</span><h4>Biblioteca com horário estendido</h4><p>Durante o período de provas, a biblioteca central funcionará até às 23h de segunda a sábado.</p><div class="meta"><span>Biblioteca · há 2 dias</span><span></span></div></div>
+        <div class="card"><span class="tag">ENSINO</span><h4>Calendário de recuperação divulgado</h4><p>Já está disponível o calendário de provas de segunda chamada para o semestre corrente.</p><div class="meta"><span>Secretaria · há 3 dias</span><span class="pdf">📎 PDF</span></div></div>
+      </div>
+    </div>
+  </div></div>
+  <p class="note">Visão do perfil Leitor: consulta pública do mural, filtro por categoria e busca por palavra-chave.</p>
+</section>
+
+<!-- ============ DETALHE ============ -->
+<section class="screen" id="detalhe">
+  <div class="stage"><div class="frame">
+    <div class="frame-bar"><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="url">mural.suainstituicao.edu.br/avisos/edital-monitoria-2026-2</div></div>
+    <div class="appbar">
+      <div class="brand"><svg width="22" height="22" viewBox="0 0 52 52"><rect x="4" y="4" width="44" height="44" rx="6" fill="#FAF7F0"/><circle cx="26" cy="20" r="7" fill="#1F3B32"/><rect x="24" y="26" width="4" height="16" rx="2" fill="#1F3B32" transform="rotate(8 26 26)"/><circle cx="26" cy="20" r="2.6" fill="#C1443A"/></svg>Quadro</div>
+      <nav><a class="on">Mural</a><a>Minhas ocorrências</a><a>Sobre</a></nav>
+      <div class="user"><div class="avatar">LM</div>Luiza Martins</div>
+    </div>
+    <div class="body-pad">
+      <div class="detail-wrap">
+        <div class="detail-card">
+          <span class="tag">EDITAIS</span>
+          <h2>Edital de monitoria 2026.2 publicado</h2>
+          <div class="sub">Publicado pela Coordenação de Curso · 14/09/2026, 09:12</div>
+          <div class="content">
+            Estão abertas as inscrições para o processo seletivo de monitoria do semestre 2026.2, com 14 vagas distribuídas entre disciplinas do ciclo básico de Engenharia e Ciência da Computação.<br><br>
+            As inscrições devem ser feitas exclusivamente pelo formulário anexo, junto ao histórico escolar atualizado. O prazo final para envio é dia 28/09, às 23h59. O resultado será divulgado no próprio mural em até 5 dias úteis após o encerramento.
+          </div>
+          <div class="attach">📎 edital-monitoria-2026-2.pdf <span style="margin-left:auto; color:var(--verde); font-weight:600;">Baixar</span></div>
+        </div>
+        <div>
+          <div class="side-card">
+            <h5>DETALHES</h5>
+            <div class="row"><span>Categoria</span><span>Editais</span></div>
+            <div class="row"><span>Local / Bloco</span><span>Coordenação — Bloco C</span></div>
+            <div class="row"><span>Publicado em</span><span>14/09/2026</span></div>
+            <div class="row"><span>Anexo</span><span>1 PDF</span></div>
+          </div>
+          <div class="side-card">
+            <h5>ALGO NÃO CONFERE AQUI?</h5>
+            <p style="font-size:12.5px; color:var(--texto-suave); line-height:1.6; margin:0 0 12px;">Se encontrar um problema relacionado a este aviso ou ao local citado, registre uma ocorrência.</p>
+            <span class="btn btn-primary" style="display:inline-block;">Registrar ocorrência</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div></div>
+  <p class="note">Página de detalhe de um aviso: conteúdo completo, anexo em PDF e atalho para abrir uma ocorrência relacionada.</p>
+</section>
+
+<!-- ============ FORM OCORRÊNCIA ============ -->
+<section class="screen" id="ocorrencia">
+  <div class="stage"><div class="frame">
+    <div class="frame-bar"><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="url">mural.suainstituicao.edu.br/ocorrencias/nova</div></div>
+    <div class="appbar">
+      <div class="brand"><svg width="22" height="22" viewBox="0 0 52 52"><rect x="4" y="4" width="44" height="44" rx="6" fill="#FAF7F0"/><circle cx="26" cy="20" r="7" fill="#1F3B32"/><rect x="24" y="26" width="4" height="16" rx="2" fill="#1F3B32" transform="rotate(8 26 26)"/><circle cx="26" cy="20" r="2.6" fill="#C1443A"/></svg>Quadro</div>
+      <nav><a>Mural</a><a class="on">Minhas ocorrências</a><a>Sobre</a></nav>
+      <div class="user"><div class="avatar">LM</div>Luiza Martins</div>
+    </div>
+    <div class="body-pad">
+      <div class="page-head" style="justify-content:center; text-align:center; margin-bottom:24px;">
+        <div><h2>Registrar ocorrência</h2><p>Relate um problema de infraestrutura ou suporte encontrado no campus</p></div>
+      </div>
+      <div class="form-wrap">
+        <div class="field"><label>Título</label><div class="input" style="color:var(--texto-suave);">Ex.: Ar-condicionado quebrado na sala 204</div></div>
+        <div class="field"><label>Descrição</label><div class="textarea" style="color:var(--texto-suave); padding-top:11px;">Descreva o que está acontecendo e desde quando…</div></div>
+        <div class="field"><label>Categoria</label><div class="pillrow"><span class="pill sel">Infraestrutura</span><span class="pill">Ensino</span><span class="pill">Suporte</span><span class="pill">Outro</span></div></div>
+        <div class="field"><label>Local / Bloco</label><div class="select" style="color:var(--texto-suave);">Bloco B — Sala 204  ▾</div></div>
+        <div class="field"><label>Foto (opcional)</label><div class="dropzone">Arraste uma imagem ou clique para anexar</div><div class="hint">Ajuda a equipe responsável a entender o problema mais rápido.</div></div>
+        <div class="formactions">
+          <span class="btn btn-outline-light">Cancelar</span>
+          <span class="btn btn-primary">Enviar ocorrência</span>
+        </div>
+      </div>
+    </div>
+  </div></div>
+  <p class="note">Formulário do Leitor para abrir uma ocorrência — status inicial sempre "Aberta", visível depois em "Minhas ocorrências".</p>
+</section>
+
+<!-- ============ CRIAR AVISO (ADMIN) ============ -->
+<section class="screen" id="criaraviso">
+  <div class="stage"><div class="frame">
+    <div class="frame-bar"><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="url">mural.suainstituicao.edu.br/admin/avisos/novo</div></div>
+    <div class="appbar">
+      <div class="brand"><svg width="22" height="22" viewBox="0 0 52 52"><rect x="4" y="4" width="44" height="44" rx="6" fill="#FAF7F0"/><circle cx="26" cy="20" r="7" fill="#1F3B32"/><rect x="24" y="26" width="4" height="16" rx="2" fill="#1F3B32" transform="rotate(8 26 26)"/><circle cx="26" cy="20" r="2.6" fill="#C1443A"/></svg>Quadro <span style="font-family:'IBM Plex Sans'; font-weight:500; font-size:11px; background:rgba(250,247,240,0.15); padding:3px 8px; border-radius:5px; margin-left:8px;">ADMIN</span></div>
+      <nav><a>Avisos</a><a class="on">Novo aviso</a><a>Ocorrências</a></nav>
+      <div class="user"><div class="avatar">PR</div>Prof. Renato</div>
+    </div>
+    <div class="body-pad">
+      <div class="page-head"><div><h2>Publicar novo aviso</h2><p>Será exibido imediatamente no mural público</p></div></div>
+      <div class="form-wrap" style="max-width:100%;">
+        <div class="field"><label>Título</label><div class="input" style="color:var(--texto-suave);">Ex.: Alteração de prazo — TCC I</div></div>
+        <div class="field"><label>Conteúdo</label><div class="textarea" style="min-height:120px; color:var(--texto-suave); padding-top:11px;">Descreva o comunicado por completo…</div></div>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:18px;">
+          <div class="field"><label>Categoria</label><div class="pillrow"><span class="pill sel">Ensino</span><span class="pill">Infraestrutura</span><span class="pill">Editais</span><span class="pill">Eventos</span></div></div>
+          <div class="field"><label>Data de publicação</label><div class="input" style="color:var(--texto-suave);">14/09/2026 · agora</div></div>
+        </div>
+        <div class="field"><label>Anexo (PDF)</label><div class="dropzone">📎 Arraste um arquivo PDF ou clique para enviar — salvo no bucket S3</div></div>
+        <div class="formactions">
+          <span class="btn btn-outline-light">Salvar rascunho</span>
+          <span class="btn btn-primary">Publicar aviso</span>
+        </div>
+      </div>
+    </div>
+  </div></div>
+  <p class="note">Formulário do Administrador/Publicador para criar um aviso institucional com anexo em PDF.</p>
+</section>
+
+<!-- ============ PAINEL ADMIN ============ -->
+<section class="screen" id="painel">
+  <div class="stage"><div class="frame">
+    <div class="frame-bar"><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="url">mural.suainstituicao.edu.br/admin/ocorrencias</div></div>
+    <div class="appbar">
+      <div class="brand"><svg width="22" height="22" viewBox="0 0 52 52"><rect x="4" y="4" width="44" height="44" rx="6" fill="#FAF7F0"/><circle cx="26" cy="20" r="7" fill="#1F3B32"/><rect x="24" y="26" width="4" height="16" rx="2" fill="#1F3B32" transform="rotate(8 26 26)"/><circle cx="26" cy="20" r="2.6" fill="#C1443A"/></svg>Quadro <span style="font-family:'IBM Plex Sans'; font-weight:500; font-size:11px; background:rgba(250,247,240,0.15); padding:3px 8px; border-radius:5px; margin-left:8px;">ADMIN</span></div>
+      <nav><a>Avisos</a><a>Novo aviso</a><a class="on">Ocorrências</a></nav>
+      <div class="user"><div class="avatar">PR</div>Prof. Renato</div>
+    </div>
+    <div class="body-pad">
+      <div class="page-head"><div><h2>Ocorrências reportadas</h2><p>9 abertas · 4 em andamento · 21 resolvidas este semestre</p></div></div>
+      <table class="table">
+        <tr><th>Título</th><th>Categoria</th><th>Local</th><th>Solicitante</th><th>Status</th><th>Ações</th></tr>
+        <tr><td>Ar-condicionado quebrado</td><td>Infraestrutura</td><td>Bloco B · Sala 204</td><td>Luiza Martins</td><td><span class="status aberta">Aberta</span></td><td class="row-actions"><span class="icon-btn">Atender</span></td></tr>
+        <tr><td>Projetor sem sinal</td><td>Infraestrutura</td><td>Bloco A · Sala 12</td><td>Diego Souza</td><td><span class="status andamento">Em andamento</span></td><td class="row-actions"><span class="icon-btn">Concluir</span></td></tr>
+        <tr><td>Torneira vazando</td><td>Infraestrutura</td><td>Bloco C · Banheiro T1</td><td>Ana Prado</td><td><span class="status resolvida">Resolvida</span></td><td class="row-actions"><span class="icon-btn">Ver</span></td></tr>
+        <tr><td>Sem acesso ao Wi-Fi</td><td>Suporte</td><td>Biblioteca</td><td>Caio Teixeira</td><td><span class="status aberta">Aberta</span></td><td class="row-actions"><span class="icon-btn">Atender</span></td></tr>
+        <tr><td>Cadeiras insuficientes</td><td>Infraestrutura</td><td>Bloco B · Sala 108</td><td>Marina Alves</td><td><span class="status andamento">Em andamento</span></td><td class="row-actions"><span class="icon-btn">Concluir</span></td></tr>
+      </table>
+    </div>
+  </div></div>
+  <p class="note">Painel do Administrador para acompanhar e alterar o status das ocorrências registradas pela comunidade.</p>
+</section>
+
+<script>
+document.querySelectorAll('.tab').forEach(t=>{
+  t.addEventListener('click', ()=>{
+    document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
+    document.querySelectorAll('.screen').forEach(x=>x.classList.remove('active'));
+    t.classList.add('active');
+    document.getElementById(t.dataset.s).classList.add('active');
+    window.scrollTo({top:0, behavior:'instant'});
+  });
+});
+</script>
+</body>
+</html>
