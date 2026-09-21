@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import type { CategoriaAviso, Usuario } from '../types';
 
+import { validation } from '../utils/validation';
+
 interface CreateNoticeModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -31,12 +33,22 @@ export const CreateNoticeModal: React.FC<CreateNoticeModalProps> = ({
   const [localBloco, setLocalBloco] = useState('Coordenação — Bloco C');
   const [anexoNome, setAnexoNome] = useState<string | undefined>(undefined);
   const [anexoTamanho, setAnexoTamanho] = useState<string | undefined>(undefined);
+  const [errors, setErrors] = useState<Record<string, string>>({});
 
   if (!isOpen) return null;
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
+      if (!file.name.toLowerCase().endsWith('.pdf')) {
+        setErrors((prev) => ({ ...prev, anexo: 'Apenas arquivos PDF são permitidos.' }));
+        return;
+      }
+      setErrors((prev) => {
+        const u = { ...prev };
+        delete u.anexo;
+        return u;
+      });
       setAnexoNome(file.name);
       const sizeMB = (file.size / (1024 * 1024)).toFixed(1);
       setAnexoTamanho(`${sizeMB} MB`);
@@ -45,8 +57,16 @@ export const CreateNoticeModal: React.FC<CreateNoticeModalProps> = ({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!titulo.trim() || !conteudo.trim()) {
-      alert('Por favor, preencha o título e o conteúdo do comunicado.');
+    const result = validation.validateNotice({
+      titulo,
+      conteudo,
+      categoria,
+      local_bloco: localBloco,
+      anexoNome,
+    });
+
+    if (!result.isValid) {
+      setErrors(result.errors);
       return;
     }
 
@@ -65,6 +85,7 @@ export const CreateNoticeModal: React.FC<CreateNoticeModalProps> = ({
     setTitulo('');
     setConteudo('');
     setAnexoNome(undefined);
+    setErrors({});
     onClose();
   };
 
@@ -105,11 +126,22 @@ export const CreateNoticeModal: React.FC<CreateNoticeModalProps> = ({
             <input
               type="text"
               value={titulo}
-              onChange={(e) => setTitulo(e.target.value)}
+              onChange={(e) => {
+                setTitulo(e.target.value);
+                if (errors.titulo) setErrors((prev) => ({ ...prev, titulo: '' }));
+              }}
               placeholder="Ex.: Alteração de prazo — TCC I"
-              className="w-full bg-[#EDE1CB]/60 border border-[#22201B]/20 rounded-lg px-3.5 py-2.5 text-sm text-[#22201B] placeholder-[#5A554A]/60 focus:outline-none focus:border-[#1F3B32] focus:ring-1 focus:ring-[#1F3B32]"
-              required
+              className={`w-full bg-[#EDE1CB]/60 border rounded-lg px-3.5 py-2.5 text-sm text-[#22201B] placeholder-[#5A554A]/60 focus:outline-none focus:ring-1 transition ${
+                errors.titulo
+                  ? 'border-[#C1443A] focus:ring-[#C1443A] bg-[#C1443A]/5'
+                  : 'border-[#22201B]/20 focus:border-[#1F3B32] focus:ring-[#1F3B32]'
+              }`}
             />
+            {errors.titulo && (
+              <p className="text-[11px] font-medium text-[#C1443A] mt-1">
+                • {errors.titulo}
+              </p>
+            )}
           </div>
 
           {/* Content */}
@@ -119,12 +151,23 @@ export const CreateNoticeModal: React.FC<CreateNoticeModalProps> = ({
             </label>
             <textarea
               value={conteudo}
-              onChange={(e) => setConteudo(e.target.value)}
+              onChange={(e) => {
+                setConteudo(e.target.value);
+                if (errors.conteudo) setErrors((prev) => ({ ...prev, conteudo: '' }));
+              }}
               placeholder="Descreva o comunicado por completo, prazos, instruções e requisitos..."
               rows={5}
-              className="w-full bg-[#EDE1CB]/60 border border-[#22201B]/20 rounded-lg px-3.5 py-2.5 text-sm text-[#22201B] placeholder-[#5A554A]/60 focus:outline-none focus:border-[#1F3B32] focus:ring-1 focus:ring-[#1F3B32]"
-              required
+              className={`w-full bg-[#EDE1CB]/60 border rounded-lg px-3.5 py-2.5 text-sm text-[#22201B] placeholder-[#5A554A]/60 focus:outline-none focus:ring-1 transition ${
+                errors.conteudo
+                  ? 'border-[#C1443A] focus:ring-[#C1443A] bg-[#C1443A]/5'
+                  : 'border-[#22201B]/20 focus:border-[#1F3B32] focus:ring-[#1F3B32]'
+              }`}
             />
+            {errors.conteudo && (
+              <p className="text-[11px] font-medium text-[#C1443A] mt-1">
+                • {errors.conteudo}
+              </p>
+            )}
           </div>
 
           {/* Category pills & Local */}

@@ -3,9 +3,10 @@ import type { Ocorrencia, StatusOcorrencia, Usuario } from '../types';
 
 interface MyOccurrencesPageProps {
   ocorrencias: Ocorrencia[];
-  currentUser: Usuario;
+  currentUser: Usuario | null;
   onOpenCreate: () => void;
   onSelectOcorrencia: (ocorrencia: Ocorrencia) => void;
+  onNavigateLogin?: () => void;
 }
 
 export const MyOccurrencesPage: React.FC<MyOccurrencesPageProps> = ({
@@ -13,7 +14,30 @@ export const MyOccurrencesPage: React.FC<MyOccurrencesPageProps> = ({
   currentUser,
   onOpenCreate,
   onSelectOcorrencia,
+  onNavigateLogin,
 }) => {
+  if (!currentUser) {
+    return (
+      <div className="max-w-md mx-auto py-12 px-4 text-center">
+        <div className="bg-[#FAF7F0] border border-[#22201B]/15 rounded-xl p-8 shadow-sm">
+          <span className="text-4xl mb-3 block">📋</span>
+          <h2 className="font-display text-2xl font-bold text-[#1F3B32]">Identificação Necessária</h2>
+          <p className="text-xs text-[#5A554A] mt-2 mb-6">
+            Faça login com seu e-mail institucional para acompanhar suas ocorrências registradas e status de atendimento.
+          </p>
+          {onNavigateLogin && (
+            <button
+              onClick={onNavigateLogin}
+              className="bg-[#1F3B32] hover:bg-[#274A3F] text-[#FAF7F0] text-xs font-semibold px-5 py-2.5 rounded-lg transition cursor-pointer"
+            >
+              Fazer Login no Quadro
+            </button>
+          )}
+        </div>
+      </div>
+    );
+  }
+
   // Filtra as ocorrências do solicitante atual
   const minhasOcorrencias = ocorrencias.filter(
     (o) => o.id_solicitante === currentUser.id_usuario

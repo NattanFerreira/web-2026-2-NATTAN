@@ -1,18 +1,24 @@
 import React, { useState, useMemo } from 'react';
-import type { Ocorrencia, StatusOcorrencia } from '../types';
+import type { Ocorrencia, StatusOcorrencia, Usuario } from '../types';
 
 interface AdminDashboardPageProps {
   ocorrencias: Ocorrencia[];
+  currentUser: Usuario | null;
   onUpdateStatus: (id: string, newStatus: StatusOcorrencia) => void;
   onSelectOcorrencia: (ocorrencia: Ocorrencia) => void;
   onDeleteOcorrencia: (id: string) => void;
+  onNavigateLogin: () => void;
+  onNavigateMural: () => void;
 }
 
 export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
   ocorrencias,
+  currentUser,
   onUpdateStatus,
   onSelectOcorrencia,
   onDeleteOcorrencia,
+  onNavigateLogin,
+  onNavigateMural,
 }) => {
   const [statusFiltro, setStatusFiltro] = useState<'TODOS' | StatusOcorrencia>('TODOS');
   const [busca, setBusca] = useState('');
@@ -36,6 +42,35 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
       return matchStatus && matchBusca;
     });
   }, [ocorrencias, statusFiltro, busca]);
+
+  // Verificação de rota restrita para Administrador
+  if (!currentUser || currentUser.perfil !== 'ADMINISTRADOR') {
+    return (
+      <div className="max-w-md mx-auto py-12 px-4 text-center">
+        <div className="bg-[#FAF7F0] border border-[#C1443A]/30 rounded-xl p-8 shadow-sm">
+          <span className="text-4xl mb-3 block">🔒</span>
+          <h2 className="font-display text-2xl font-bold text-[#1F3B32]">Painel Restrito</h2>
+          <p className="text-xs text-[#5A554A] mt-2 mb-6">
+            Apenas usuários com perfil de <strong>Administrador</strong> autenticados possuem acesso ao gerenciamento de ocorrências do campus.
+          </p>
+          <div className="space-y-2">
+            <button
+              onClick={onNavigateLogin}
+              className="w-full bg-[#1F3B32] hover:bg-[#274A3F] text-[#FAF7F0] text-xs font-semibold py-2.5 px-4 rounded-lg transition cursor-pointer"
+            >
+              Fazer Login como Administrador
+            </button>
+            <button
+              onClick={onNavigateMural}
+              className="w-full text-xs text-[#5A554A] hover:underline py-1.5 cursor-pointer"
+            >
+              Voltar ao Mural Público
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   const getStatusBadge = (status: StatusOcorrencia) => {
     switch (status) {

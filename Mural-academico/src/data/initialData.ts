@@ -2,20 +2,34 @@ import type { Usuario, Aviso, Ocorrencia } from '../types';
 
 export const USUARIOS_INICIAIS: Usuario[] = [
   {
-    id_usuario: 'user-luiza',
-    nome: 'Luiza Martins',
-    email_institucional: 'luiza.martins@ufersa.edu.br',
-    perfil: 'LEITOR',
-    avatar: 'LM',
-    cargo: 'Discente · Ciência da Computação',
-  },
-  {
     id_usuario: 'user-renato',
     nome: 'Prof. Renato',
     email_institucional: 'renato.docente@ufersa.edu.br',
     perfil: 'ADMINISTRADOR',
     avatar: 'PR',
     cargo: 'Docente · Coordenação de Curso',
+    senha: 'admin123',
+    data_cadastro: '2026-08-01T08:00:00',
+  },
+  {
+    id_usuario: 'user-admin-institucional',
+    nome: 'Administrador Institucional',
+    email_institucional: 'admin@ufersa.edu.br',
+    perfil: 'ADMINISTRADOR',
+    avatar: 'AD',
+    cargo: 'Suporte & Gestão Acadêmica',
+    senha: 'admin123',
+    data_cadastro: '2026-08-01T08:00:00',
+  },
+  {
+    id_usuario: 'user-luiza',
+    nome: 'Luiza Martins',
+    email_institucional: 'luiza.martins@ufersa.edu.br',
+    perfil: 'LEITOR',
+    avatar: 'LM',
+    cargo: 'Discente · Ciência da Computação',
+    senha: 'aluno123',
+    data_cadastro: '2026-09-01T10:00:00',
   },
 ];
 

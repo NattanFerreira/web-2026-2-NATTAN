@@ -4,7 +4,7 @@ import type { Aviso, Usuario } from '../types';
 interface NoticeCardProps {
   aviso: Aviso;
   index: number;
-  currentUser: Usuario;
+  currentUser: Usuario | null;
   onSelect: (aviso: Aviso) => void;
   onDelete?: (id: string) => void;
 }
@@ -18,7 +18,7 @@ export const NoticeCard: React.FC<NoticeCardProps> = ({
 }) => {
   const isOdd = index % 2 === 0;
   const rotationClass = isOdd ? 'paper-card-odd' : 'paper-card-even';
-  const isAdmin = currentUser.perfil === 'ADMINISTRADOR';
+  const isAdmin = currentUser?.perfil === 'ADMINISTRADOR';
 
   // Format date
   const formatDate = (dateStr: string) => {

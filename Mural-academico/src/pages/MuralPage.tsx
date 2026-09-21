@@ -4,7 +4,7 @@ import { NoticeCard } from '../components/NoticeCard';
 
 interface MuralPageProps {
   avisos: Aviso[];
-  currentUser: Usuario;
+  currentUser: Usuario | null;
   onSelectAviso: (aviso: Aviso) => void;
   onOpenCreateAviso: () => void;
   onOpenCreateOcorrencia: () => void;
@@ -30,7 +30,7 @@ export const MuralPage: React.FC<MuralPageProps> = ({
   const [categoriaAtiva, setCategoriaAtiva] = useState<'Todos' | CategoriaAviso>('Todos');
   const [busca, setBusca] = useState('');
 
-  const isAdmin = currentUser.perfil === 'ADMINISTRADOR';
+  const isAdmin = currentUser?.perfil === 'ADMINISTRADOR';
 
   // Filtragem combinada por categoria e texto de busca
   const avisosFiltrados = useMemo(() => {

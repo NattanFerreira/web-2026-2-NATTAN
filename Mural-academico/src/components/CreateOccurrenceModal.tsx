@@ -37,6 +37,8 @@ const LOCAIS_PREDEFINIDOS = [
   'Outro Local',
 ];
 
+import { validation } from '../utils/validation';
+
 export const CreateOccurrenceModal: React.FC<CreateOccurrenceModalProps> = ({
   isOpen,
   onClose,
@@ -50,6 +52,7 @@ export const CreateOccurrenceModal: React.FC<CreateOccurrenceModalProps> = ({
   const [localBloco, setLocalBloco] = useState(defaultLocation || LOCAIS_PREDEFINIDOS[0]);
   const [customLocation, setCustomLocation] = useState('');
   const [fotoPreview, setFotoPreview] = useState<string | undefined>(undefined);
+  const [errors, setErrors] = useState<Record<string, string>>({});
 
   if (!isOpen) return null;
 
@@ -66,12 +69,19 @@ export const CreateOccurrenceModal: React.FC<CreateOccurrenceModalProps> = ({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!titulo.trim() || !descricao.trim()) {
-      alert('Por favor, informe o título e a descrição da ocorrência.');
+    const finalLocation = localBloco === 'Outro Local' ? customLocation.trim() || 'Campus Central' : localBloco;
+
+    const result = validation.validateOccurrence({
+      titulo,
+      descricao,
+      categoria,
+      local_bloco: finalLocation,
+    });
+
+    if (!result.isValid) {
+      setErrors(result.errors);
       return;
     }
-
-    const finalLocation = localBloco === 'Outro Local' ? customLocation.trim() || 'Campus Central' : localBloco;
 
     onSubmit({
       titulo: titulo.trim(),
@@ -87,6 +97,7 @@ export const CreateOccurrenceModal: React.FC<CreateOccurrenceModalProps> = ({
     setTitulo('');
     setDescricao('');
     setFotoPreview(undefined);
+    setErrors({});
     onClose();
   };
 
@@ -126,11 +137,22 @@ export const CreateOccurrenceModal: React.FC<CreateOccurrenceModalProps> = ({
             <input
               type="text"
               value={titulo}
-              onChange={(e) => setTitulo(e.target.value)}
+              onChange={(e) => {
+                setTitulo(e.target.value);
+                if (errors.titulo) setErrors((prev) => ({ ...prev, titulo: '' }));
+              }}
               placeholder="Ex.: Ar-condicionado quebrado na sala 204"
-              className="w-full bg-[#EDE1CB]/60 border border-[#22201B]/20 rounded-lg px-3.5 py-2.5 text-sm text-[#22201B] placeholder-[#5A554A]/60 focus:outline-none focus:border-[#1F3B32] focus:ring-1 focus:ring-[#1F3B32]"
-              required
+              className={`w-full bg-[#EDE1CB]/60 border rounded-lg px-3.5 py-2.5 text-sm text-[#22201B] placeholder-[#5A554A]/60 focus:outline-none focus:ring-1 transition ${
+                errors.titulo
+                  ? 'border-[#C1443A] focus:ring-[#C1443A] bg-[#C1443A]/5'
+                  : 'border-[#22201B]/20 focus:border-[#1F3B32] focus:ring-[#1F3B32]'
+              }`}
             />
+            {errors.titulo && (
+              <p className="text-[11px] font-medium text-[#C1443A] mt-1">
+                • {errors.titulo}
+              </p>
+            )}
           </div>
 
           {/* Description */}
@@ -140,12 +162,23 @@ export const CreateOccurrenceModal: React.FC<CreateOccurrenceModalProps> = ({
             </label>
             <textarea
               value={descricao}
-              onChange={(e) => setDescricao(e.target.value)}
+              onChange={(e) => {
+                setDescricao(e.target.value);
+                if (errors.descricao) setErrors((prev) => ({ ...prev, descricao: '' }));
+              }}
               placeholder="Descreva o que está acontecendo, impacto e desde quando..."
               rows={4}
-              className="w-full bg-[#EDE1CB]/60 border border-[#22201B]/20 rounded-lg px-3.5 py-2.5 text-sm text-[#22201B] placeholder-[#5A554A]/60 focus:outline-none focus:border-[#1F3B32] focus:ring-1 focus:ring-[#1F3B32]"
-              required
+              className={`w-full bg-[#EDE1CB]/60 border rounded-lg px-3.5 py-2.5 text-sm text-[#22201B] placeholder-[#5A554A]/60 focus:outline-none focus:ring-1 transition ${
+                errors.descricao
+                  ? 'border-[#C1443A] focus:ring-[#C1443A] bg-[#C1443A]/5'
+                  : 'border-[#22201B]/20 focus:border-[#1F3B32] focus:ring-[#1F3B32]'
+              }`}
             />
+            {errors.descricao && (
+              <p className="text-[11px] font-medium text-[#C1443A] mt-1">
+                • {errors.descricao}
+              </p>
+            )}
           </div>
 
           {/* Category */}

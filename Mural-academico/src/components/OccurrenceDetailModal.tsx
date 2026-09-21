@@ -4,7 +4,7 @@ import type { Ocorrencia, StatusOcorrencia, Usuario } from '../types';
 interface OccurrenceDetailModalProps {
   ocorrencia: Ocorrencia | null;
   onClose: () => void;
-  currentUser: Usuario;
+  currentUser: Usuario | null;
   onUpdateStatus?: (id: string, newStatus: StatusOcorrencia) => void;
 }
 
@@ -16,7 +16,7 @@ export const OccurrenceDetailModal: React.FC<OccurrenceDetailModalProps> = ({
 }) => {
   if (!ocorrencia) return null;
 
-  const isAdmin = currentUser.perfil === 'ADMINISTRADOR';
+  const isAdmin = currentUser?.perfil === 'ADMINISTRADOR';
 
   const formatDate = (dateStr: string) => {
     try {

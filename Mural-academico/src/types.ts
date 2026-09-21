@@ -7,6 +7,8 @@ export interface Usuario {
   perfil: PerfilUsuario;
   avatar: string;
   cargo: string;
+  senha?: string;
+  data_cadastro?: string;
 }
 
 export type CategoriaAviso = 'Ensino' | 'Infraestrutura' | 'Editais' | 'Eventos';
@@ -42,5 +44,19 @@ export interface Ocorrencia {
   url_foto?: string;
 }
 
-export type TabNavegacao = 'mural' | 'minhas-ocorrencias' | 'admin-ocorrencias' | 'sobre';
+export type TabNavegacao =
+  | 'mural'
+  | 'minhas-ocorrencias'
+  | 'admin-ocorrencias'
+  | 'admin-novo-aviso'
+  | 'nova-ocorrencia'
+  | 'login'
+  | 'cadastro'
+  | 'sobre'
+  | 'detalhe-aviso';
+
+export interface RouteState {
+  tab: TabNavegacao;
+  params?: Record<string, string>;
+}
 
