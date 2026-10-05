@@ -31,6 +31,16 @@ export const NoticeDetailModal: React.FC<NoticeDetailModalProps> = ({
 
   const handleDownloadAttachment = () => {
     // Simula o download do PDF
+    if (aviso.url_anexo) {
+      const link = document.createElement('a');
+      link.href = aviso.url_anexo;
+      link.target = '_blank';
+      link.download = aviso.nome_anexo || 'anexo.pdf';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      return;
+    }
     const dummyContent = `Documento Acadêmico UFERSA\n\nAviso: ${aviso.titulo}\nPublicado em: ${aviso.data_publicacao}\nAutor: ${aviso.nome_autor}\nLocal: ${aviso.local_bloco}\n\nConteúdo:\n${aviso.conteudo}`;
     const blob = new Blob([dummyContent], { type: 'application/pdf' });
     const url = URL.createObjectURL(blob);

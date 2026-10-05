@@ -132,8 +132,12 @@ export function App() {
     }
   };
 
-  const handleUpdateOcorrenciaStatus = (id_ocorrencia: string, newStatus: StatusOcorrencia) => {
-    storageService.updateOcorrenciaStatus(id_ocorrencia, newStatus);
+  const handleUpdateOcorrenciaStatus = (
+    id_ocorrencia: string,
+    newStatus: StatusOcorrencia,
+    parecer?: string
+  ) => {
+    storageService.updateOcorrenciaStatus(id_ocorrencia, newStatus, parecer);
     const atualizadas = storageService.getOcorrencias();
     setOcorrencias(atualizadas);
     if (selectedOcorrencia?.id_ocorrencia === id_ocorrencia) {

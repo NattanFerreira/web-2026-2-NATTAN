@@ -4,7 +4,7 @@ import type { Ocorrencia, StatusOcorrencia, Usuario } from '../types';
 interface AdminDashboardPageProps {
   ocorrencias: Ocorrencia[];
   currentUser: Usuario | null;
-  onUpdateStatus: (id: string, newStatus: StatusOcorrencia) => void;
+  onUpdateStatus: (id: string, newStatus: StatusOcorrencia, parecer?: string) => void;
   onSelectOcorrencia: (ocorrencia: Ocorrencia) => void;
   onDeleteOcorrencia: (id: string) => void;
   onNavigateLogin: () => void;
@@ -207,10 +207,15 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                     <td className="py-3.5 px-4 font-semibold text-[#22201B]">
                       <button
                         onClick={() => onSelectOcorrencia(oco)}
-                        className="hover:text-[#1F3B32] hover:underline text-left cursor-pointer"
+                        className="hover:text-[#1F3B32] hover:underline text-left cursor-pointer block"
                       >
                         {oco.titulo}
                       </button>
+                      {oco.parecer_atendimento && (
+                        <span className="text-[10.5px] text-[#35577A] italic font-normal block mt-0.5 line-clamp-1">
+                          🔧 Parecer: {oco.parecer_atendimento}
+                        </span>
+                      )}
                     </td>
                     <td className="py-3.5 px-4 text-[#5A554A]">{oco.categoria}</td>
                     <td className="py-3.5 px-4 text-[#22201B] font-medium">{oco.local_bloco}</td>

@@ -43,6 +43,9 @@ function parseHash(hash: string): RouteInfo {
     if (segments[1] === 'avisos' && segments[2] === 'novo') {
       return { tab: 'admin-novo-aviso', params: queryParams };
     }
+    if (segments[1] === 'avisos' && segments[2] && segments[3] === 'editar') {
+      return { tab: 'admin-editar-aviso', params: { ...queryParams, id: segments[2] } };
+    }
     return { tab: 'admin-ocorrencias', params: queryParams };
   }
 
@@ -52,6 +55,10 @@ function parseHash(hash: string): RouteInfo {
 
   if (segments[0] === 'admin-novo-aviso') {
     return { tab: 'admin-novo-aviso', params: queryParams };
+  }
+
+  if (segments[0] === 'admin-editar-aviso') {
+    return { tab: 'admin-editar-aviso', params: queryParams };
   }
 
   if (segments[0] === 'ocorrencias' && segments[1] === 'nova') {
@@ -93,6 +100,9 @@ function buildHash(tab: TabNavegacao, params?: Record<string, string>): string {
       break;
     case 'admin-novo-aviso':
       base = '#/admin/avisos/novo';
+      break;
+    case 'admin-editar-aviso':
+      base = `#/admin/avisos/${params?.id || ''}/editar`;
       break;
     case 'nova-ocorrencia':
       base = '#/ocorrencias/nova';

@@ -163,10 +163,19 @@ export const storageService = {
     return novaOcorrencia;
   },
 
-  updateOcorrenciaStatus(id_ocorrencia: string, novoStatus: StatusOcorrencia): void {
+  updateOcorrenciaStatus(id_ocorrencia: string, novoStatus: StatusOcorrencia, parecer?: string): void {
     const ocorrencias = this.getOcorrencias();
     const atualizadas = ocorrencias.map((o) =>
-      o.id_ocorrencia === id_ocorrencia ? { ...o, status: novoStatus } : o
+      o.id_ocorrencia === id_ocorrencia
+        ? {
+            ...o,
+            status: novoStatus,
+            ...(parecer !== undefined && parecer.trim() !== ''
+              ? { parecer_atendimento: parecer.trim() }
+              : {}),
+            data_atualizacao: new Date().toISOString(),
+          }
+        : o
     );
     this.saveOcorrencias(atualizadas);
   },

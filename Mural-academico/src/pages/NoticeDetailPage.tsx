@@ -7,6 +7,7 @@ interface NoticeDetailPageProps {
   onBack: () => void;
   onReportOccurrence: (location: string) => void;
   onDeleteAviso?: (id: string) => void;
+  onEditAviso?: (id: string) => void;
 }
 
 export const NoticeDetailPage: React.FC<NoticeDetailPageProps> = ({
@@ -15,6 +16,7 @@ export const NoticeDetailPage: React.FC<NoticeDetailPageProps> = ({
   onBack,
   onReportOccurrence,
   onDeleteAviso,
+  onEditAviso,
 }) => {
   if (!aviso) {
     return (
@@ -70,6 +72,30 @@ export const NoticeDetailPage: React.FC<NoticeDetailPageProps> = ({
             🗑️ Excluir comunicado
           </button>
         )}
+        <div className="flex items-center gap-2">
+          {isAdmin && onEditAviso && (
+            <button
+              onClick={() => onEditAviso(aviso.id_aviso)}
+              className="text-xs font-semibold text-[#1F3B32] hover:bg-[#1F3B32]/10 px-3 py-1 rounded transition border border-[#1F3B32]/30 cursor-pointer flex items-center gap-1"
+            >
+              <span>✏️</span> Editar
+            </button>
+          )}
+
+          {isAdmin && onDeleteAviso && (
+            <button
+              onClick={() => {
+                if (confirm('Tem certeza de que deseja remover este aviso do mural?')) {
+                  onDeleteAviso(aviso.id_aviso);
+                  onBack();
+                }
+              }}
+              className="text-xs font-semibold text-[#C1443A] hover:bg-[#C1443A]/10 px-3 py-1 rounded transition border border-[#C1443A]/30 cursor-pointer flex items-center gap-1"
+            >
+              <span>🗑️</span> Excluir
+            </button>
+          )}
+        </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
@@ -116,14 +142,16 @@ export const NoticeDetailPage: React.FC<NoticeDetailPageProps> = ({
                   </span>
                 </div>
               </div>
-              <button
-                type="button"
-                onClick={() => alert(`Download simulado do anexo "${aviso.nome_anexo}". Em ambiente de nuvem AWS, este arquivo é entregue via bucket Amazon S3 com URL pré-assinada.`)}
-                className="bg-[#1F3B32] hover:bg-[#274A3F] text-[#FAF7F0] text-xs font-semibold px-4 py-2 rounded-lg transition cursor-pointer self-start sm:self-auto shrink-0 flex items-center gap-1.5"
+              <a
+                href={aviso.url_anexo || `/api/files/${aviso.nome_anexo}`}
+                target="_blank"
+                rel="noreferrer"
+                download={aviso.nome_anexo}
+                className="bg-[#1F3B32] hover:bg-[#274A3F] text-[#FAF7F0] text-xs font-semibold px-4 py-2 rounded-lg transition cursor-pointer self-start sm:self-auto shrink-0 flex items-center gap-1.5 no-underline"
               >
                 <span>Baixar Documento</span>
                 <span>↓</span>
-              </button>
+              </a>
             </div>
           )}
         </div>

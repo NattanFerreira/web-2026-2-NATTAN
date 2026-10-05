@@ -5,7 +5,7 @@ interface OccurrenceDetailModalProps {
   ocorrencia: Ocorrencia | null;
   onClose: () => void;
   currentUser: Usuario | null;
-  onUpdateStatus?: (id: string, newStatus: StatusOcorrencia) => void;
+  onUpdateStatus?: (id: string, newStatus: StatusOcorrencia, parecer?: string) => void;
 }
 
 export const OccurrenceDetailModal: React.FC<OccurrenceDetailModalProps> = ({
@@ -125,39 +125,73 @@ export const OccurrenceDetailModal: React.FC<OccurrenceDetailModalProps> = ({
             </div>
           )}
 
+          {/* Parecer Técnico da Administração */}
+          {ocorrencia.parecer_atendimento && (
+            <div className="bg-[#1F3B32]/10 border border-[#1F3B32]/30 rounded-lg p-3.5 text-xs">
+              <span className="font-bold text-[#1F3B32] uppercase font-mono text-[11px] flex items-center gap-1.5 mb-1">
+                <span>🔧</span> Parecer Técnico / Resposta da Administração:
+              </span>
+              <p className="text-[#22201B] leading-relaxed italic">
+                "{ocorrencia.parecer_atendimento}"
+              </p>
+              {ocorrencia.data_atualizacao && (
+                <span className="text-[10px] text-[#5A554A] block mt-1.5">
+                  Atualizado em {formatDate(ocorrencia.data_atualizacao)}
+                </span>
+              )}
+            </div>
+          )}
+
           {/* Admin Status Actions */}
           {isAdmin && onUpdateStatus && (
-            <div className="pt-3 border-t border-[#22201B]/15">
-              <span className="block text-xs font-bold text-[#5A554A] uppercase font-mono mb-2">
-                Ações Administrativas (Alterar Status)
+            <div className="pt-3 border-t border-[#22201B]/15 space-y-3">
+              <span className="block text-xs font-bold text-[#5A554A] uppercase font-mono">
+                Ações Administrativas (Alterar Status & Parecer)
               </span>
+
+              <div>
+                <label className="block text-[11px] font-semibold text-[#22201B] mb-1">
+                  Adicionar ou Atualizar Parecer Técnico:
+                </label>
+                <input
+                  type="text"
+                  id="parecer-input"
+                  defaultValue={ocorrencia.parecer_atendimento || ''}
+                  placeholder="Ex: Técnico de manutenção enviado para substituição da peça..."
+                  className="w-full bg-[#EDE1CB]/50 border border-[#22201B]/20 rounded-lg px-3 py-1.5 text-xs text-[#22201B] focus:outline-none focus:border-[#1F3B32]"
+                />
+              </div>
+
               <div className="flex flex-wrap gap-2">
                 {ocorrencia.status !== 'EM_ANDAMENTO' && (
                   <button
                     onClick={() => {
-                      onUpdateStatus(ocorrencia.id_ocorrencia, 'EM_ANDAMENTO');
+                      const input = document.getElementById('parecer-input') as HTMLInputElement | null;
+                      onUpdateStatus(ocorrencia.id_ocorrencia, 'EM_ANDAMENTO', input?.value);
                       onClose();
                     }}
                     className="bg-[#35577A] hover:bg-[#28435f] text-[#FAF7F0] text-xs font-semibold px-3.5 py-2 rounded-lg transition cursor-pointer"
                   >
-                    Iniciar Atendimento
+                    Atender (Em andamento)
                   </button>
                 )}
                 {ocorrencia.status !== 'RESOLVIDA' && (
                   <button
                     onClick={() => {
-                      onUpdateStatus(ocorrencia.id_ocorrencia, 'RESOLVIDA');
+                      const input = document.getElementById('parecer-input') as HTMLInputElement | null;
+                      onUpdateStatus(ocorrencia.id_ocorrencia, 'RESOLVIDA', input?.value || 'Ocorrência atendida e finalizada.');
                       onClose();
                     }}
                     className="bg-[#1F3B32] hover:bg-[#274A3F] text-[#FAF7F0] text-xs font-semibold px-3.5 py-2 rounded-lg transition cursor-pointer"
                   >
-                    Concluir Ocorrência
+                    Concluir (Resolvida)
                   </button>
                 )}
                 {ocorrencia.status !== 'ABERTA' && (
                   <button
                     onClick={() => {
-                      onUpdateStatus(ocorrencia.id_ocorrencia, 'ABERTA');
+                      const input = document.getElementById('parecer-input') as HTMLInputElement | null;
+                      onUpdateStatus(ocorrencia.id_ocorrencia, 'ABERTA', input?.value);
                       onClose();
                     }}
                     className="border border-[#C1443A] text-[#C1443A] hover:bg-[#C1443A]/10 text-xs font-semibold px-3 py-2 rounded-lg transition cursor-pointer"

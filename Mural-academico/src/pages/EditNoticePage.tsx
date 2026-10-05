@@ -1,30 +1,23 @@
-import React, { useState } from 'react';
-import type { CategoriaAviso, Usuario } from '../types';
+import React, { useState, useEffect } from 'react';
+import type { Aviso, CategoriaAviso, Usuario } from '../types';
 import { validation } from '../utils/validation';
-import { apiService } from '../services/apiService';
 import { PinIcon } from '../components/PinIcon';
 
-interface CreateNoticePageProps {
+interface EditNoticePageProps {
+  avisoId: string;
   currentUser: Usuario | null;
-  onSubmit: (data: {
-    titulo: string;
-    conteudo: string;
-    categoria: CategoriaAviso;
-    local_bloco: string;
-    id_autor: string;
-    nome_autor: string;
-    nome_anexo?: string;
-    url_anexo?: string;
-    tamanho_anexo?: string;
-  }) => void;
+  getAviso: (id: string) => Promise<Aviso | undefined> | Aviso | undefined;
+  onSubmit: (id: string, data: Partial<Aviso>) => Promise<void>;
   onNavigateLogin: () => void;
   onNavigateMural: () => void;
 }
 
 const CATEGORIAS: CategoriaAviso[] = ['Ensino', 'Infraestrutura', 'Editais', 'Eventos'];
 
-export const CreateNoticePage: React.FC<CreateNoticePageProps> = ({
+export const EditNoticePage: React.FC<EditNoticePageProps> = ({
+  avisoId,
   currentUser,
+  getAviso,
   onSubmit,
   onNavigateLogin,
   onNavigateMural,
@@ -32,15 +25,39 @@ export const CreateNoticePage: React.FC<CreateNoticePageProps> = ({
   const [titulo, setTitulo] = useState('');
   const [conteudo, setConteudo] = useState('');
   const [categoria, setCategoria] = useState<CategoriaAviso>('Ensino');
-  const [localBloco, setLocalBloco] = useState('Coordenação — Bloco C');
+  const [localBloco, setLocalBloco] = useState('');
   const [anexoNome, setAnexoNome] = useState<string | undefined>(undefined);
   const [anexoUrl, setAnexoUrl] = useState<string | undefined>(undefined);
   const [anexoTamanho, setAnexoTamanho] = useState<string | undefined>(undefined);
-  const [isUploading, setIsUploading] = useState(false);
+
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Proteção de rota administrativa
+  // Carrega os dados atuais do aviso
+  useEffect(() => {
+    let isMounted = true;
+    const load = async () => {
+      setIsLoading(true);
+      const aviso = await getAviso(avisoId);
+      if (isMounted && aviso) {
+        setTitulo(aviso.titulo);
+        setConteudo(aviso.conteudo);
+        setCategoria(aviso.categoria);
+        setLocalBloco(aviso.local_bloco);
+        setAnexoNome(aviso.nome_anexo);
+        setAnexoUrl(aviso.url_anexo);
+        setAnexoTamanho(aviso.tamanho_anexo);
+      }
+      if (isMounted) setIsLoading(false);
+    };
+    load();
+    return () => {
+      isMounted = false;
+    };
+  }, [avisoId, getAviso]);
+
+  // Bloqueio de rota restrita para Administrador
   if (!currentUser || currentUser.perfil !== 'ADMINISTRADOR') {
     return (
       <div className="max-w-md mx-auto py-12 px-4 text-center">
@@ -48,8 +65,7 @@ export const CreateNoticePage: React.FC<CreateNoticePageProps> = ({
           <span className="text-4xl mb-3 block">🔒</span>
           <h2 className="font-display text-2xl font-bold text-[#1F3B32]">Acesso Restrito</h2>
           <p className="text-xs text-[#5A554A] mt-2 mb-6">
-            Apenas usuários com perfil <strong>Administrador / Publicador</strong> autenticados podem
-            criar novos comunicados institucionais.
+            Apenas administradores autenticados podem editar comunicados institucionais.
           </p>
           <div className="space-y-2">
             <button
@@ -70,39 +86,16 @@ export const CreateNoticePage: React.FC<CreateNoticePageProps> = ({
     );
   }
 
-  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      if (!file.name.toLowerCase().endsWith('.pdf')) {
-        setErrors((prev) => ({ ...prev, anexo: 'Apenas arquivos em formato PDF são permitidos.' }));
-        return;
-      }
-      setErrors((prev) => {
-        const u = { ...prev };
-        delete u.anexo;
-        return u;
-      });
-      setAnexoNome(file.name);
-      const sizeMB = (file.size / (1024 * 1024)).toFixed(1);
-      setAnexoTamanho(`${sizeMB} MB`);
-      setIsUploading(true);
-      try {
-        const uploadResult = await apiService.uploadFile(file);
-        setAnexoNome(uploadResult.originalName);
-        setAnexoUrl(uploadResult.url);
-        setAnexoTamanho(uploadResult.tamanho);
-      } catch (err: unknown) {
-        setErrors((prev) => ({
-          ...prev,
-          anexo: err instanceof Error ? err.message : 'Falha ao realizar upload do arquivo.',
-        }));
-      } finally {
-        setIsUploading(false);
-      }
-    }
-  };
+  if (isLoading) {
+    return (
+      <div className="max-w-md mx-auto py-16 text-center text-[#5A554A]">
+        <div className="animate-spin text-3xl mb-3">⏳</div>
+        <p className="text-xs">Carregando dados do comunicado...</p>
+      </div>
+    );
+  }
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     const validationResult = validation.validateNotice({
@@ -119,18 +112,21 @@ export const CreateNoticePage: React.FC<CreateNoticePageProps> = ({
     }
 
     setIsSubmitting(true);
-    onSubmit({
-      titulo: titulo.trim(),
-      conteudo: conteudo.trim(),
-      categoria,
-      local_bloco: localBloco.trim(),
-      id_autor: currentUser.id_usuario,
-      nome_autor: `${currentUser.nome} (${currentUser.cargo})`,
-      nome_anexo: anexoNome,
-      url_anexo: anexoUrl,
-      tamanho_anexo: anexoTamanho,
-    });
-    setIsSubmitting(false);
+    try {
+      await onSubmit(avisoId, {
+        titulo: titulo.trim(),
+        conteudo: conteudo.trim(),
+        categoria,
+        local_bloco: localBloco.trim(),
+        nome_anexo: anexoNome,
+        url_anexo: anexoUrl,
+        tamanho_anexo: anexoTamanho,
+      });
+    } catch (err: unknown) {
+      alert(err instanceof Error ? err.message : 'Erro ao atualizar comunicado.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -155,15 +151,15 @@ export const CreateNoticePage: React.FC<CreateNoticePageProps> = ({
             <div className="flex items-center gap-2">
               <PinIcon size={20} variant="dark" />
               <h2 className="font-display text-2xl font-bold text-[#1F3B32]">
-                Publicar Novo Aviso Institucional
+                Editar Comunicado Institucional
               </h2>
             </div>
             <p className="text-xs text-[#5A554A] mt-1">
-              O aviso será fixado imediatamente no mural acadêmico da instituição
+              Atualize as informações, prazos ou retifique o aviso publicado
             </p>
           </div>
           <span className="text-[10px] font-mono font-bold bg-[#1F3B32] text-[#FAF7F0] px-2 py-1 rounded">
-            ADMINISTRADOR
+            EDIÇÃO
           </span>
         </div>
 
@@ -181,13 +177,10 @@ export const CreateNoticePage: React.FC<CreateNoticePageProps> = ({
               value={titulo}
               onChange={(e) => {
                 setTitulo(e.target.value);
-                if (errors.titulo) {
-                  setErrors((prev) => ({ ...prev, titulo: '' }));
-                }
+                if (errors.titulo) setErrors((prev) => ({ ...prev, titulo: '' }));
               }}
-              placeholder="Ex: Edital de Seleção de Monitoria 2026.2"
               maxLength={120}
-              className={`w-full bg-[#EDE1CB]/40 border rounded-lg px-3.5 py-2.5 text-sm text-[#22201B] placeholder-[#5A554A]/60 focus:outline-none focus:ring-1 transition ${
+              className={`w-full bg-[#EDE1CB]/40 border rounded-lg px-3.5 py-2.5 text-sm text-[#22201B] focus:outline-none focus:ring-1 transition ${
                 errors.titulo
                   ? 'border-[#C1443A] focus:ring-[#C1443A] bg-[#C1443A]/5'
                   : 'border-[#22201B]/20 focus:border-[#1F3B32] focus:ring-[#1F3B32]'
@@ -233,12 +226,9 @@ export const CreateNoticePage: React.FC<CreateNoticePageProps> = ({
               value={localBloco}
               onChange={(e) => {
                 setLocalBloco(e.target.value);
-                if (errors.local_bloco) {
-                  setErrors((prev) => ({ ...prev, local_bloco: '' }));
-                }
+                if (errors.local_bloco) setErrors((prev) => ({ ...prev, local_bloco: '' }));
               }}
-              placeholder="Ex: Coordenação de Engenharia — Bloco C"
-              className={`w-full bg-[#EDE1CB]/40 border rounded-lg px-3.5 py-2.5 text-sm text-[#22201B] placeholder-[#5A554A]/60 focus:outline-none focus:ring-1 transition ${
+              className={`w-full bg-[#EDE1CB]/40 border rounded-lg px-3.5 py-2.5 text-sm text-[#22201B] focus:outline-none focus:ring-1 transition ${
                 errors.local_bloco
                   ? 'border-[#C1443A] focus:ring-[#C1443A] bg-[#C1443A]/5'
                   : 'border-[#22201B]/20 focus:border-[#1F3B32] focus:ring-[#1F3B32]'
@@ -261,12 +251,9 @@ export const CreateNoticePage: React.FC<CreateNoticePageProps> = ({
               value={conteudo}
               onChange={(e) => {
                 setConteudo(e.target.value);
-                if (errors.conteudo) {
-                  setErrors((prev) => ({ ...prev, conteudo: '' }));
-                }
+                if (errors.conteudo) setErrors((prev) => ({ ...prev, conteudo: '' }));
               }}
-              placeholder="Descreva as informações, prazos, orientações e público-alvo com clareza..."
-              className={`w-full bg-[#EDE1CB]/40 border rounded-lg p-3 text-sm text-[#22201B] placeholder-[#5A554A]/60 focus:outline-none focus:ring-1 transition ${
+              className={`w-full bg-[#EDE1CB]/40 border rounded-lg p-3 text-sm text-[#22201B] focus:outline-none focus:ring-1 transition ${
                 errors.conteudo
                   ? 'border-[#C1443A] focus:ring-[#C1443A] bg-[#C1443A]/5'
                   : 'border-[#22201B]/20 focus:border-[#1F3B32] focus:ring-[#1F3B32]'
@@ -279,46 +266,27 @@ export const CreateNoticePage: React.FC<CreateNoticePageProps> = ({
             )}
           </div>
 
-          {/* Anexo em PDF */}
-          <div>
-            <label className="block text-xs font-semibold text-[#22201B] mb-1.5">
-              Anexo Oficial em PDF (Persistência no Amazon S3)
-            </label>
-            <div className="border-1.5 border-dashed border-[#1F3B32]/40 rounded-lg p-4 bg-[#EDE1CB]/30 text-center relative hover:bg-[#EDE1CB]/50 transition">
-              <input
-                type="file"
-                accept=".pdf,application/pdf"
-                onChange={handleFileUpload}
-                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-              />
-              <span className="text-2xl block mb-1">📎</span>
-              {anexoNome ? (
-                <div className="text-xs font-semibold text-[#1F3B32]">
-                  <span>{anexoNome}</span> {anexoTamanho && `(${anexoTamanho})`}
-                  <button
-                    type="button"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setAnexoNome(undefined);
-                      setAnexoTamanho(undefined);
-                    }}
-                    className="ml-2 text-[#C1443A] hover:underline cursor-pointer"
-                  >
-                    Remover
-                  </button>
-                </div>
-              ) : (
-                <p className="text-xs text-[#5A554A]">
-                  Arraste o arquivo PDF do edital/comunicado ou clique para selecionar
-                </p>
-              )}
+          {/* Anexo atual */}
+          {anexoNome && (
+            <div className="bg-[#EDE1CB]/60 border border-[#1F3B32]/20 rounded-lg p-3 flex items-center justify-between text-xs">
+              <div className="flex items-center gap-2">
+                <span>📎</span>
+                <span className="font-semibold text-[#1F3B32]">{anexoNome}</span>
+                {anexoTamanho && <span className="text-[#5A554A]">({anexoTamanho})</span>}
+              </div>
+              <button
+                type="button"
+                onClick={() => {
+                  setAnexoNome(undefined);
+                  setAnexoUrl(undefined);
+                  setAnexoTamanho(undefined);
+                }}
+                className="text-[#C1443A] hover:underline cursor-pointer"
+              >
+                Remover anexo
+              </button>
             </div>
-            {errors.anexo && (
-              <p className="text-[11px] font-medium text-[#C1443A] mt-1 flex items-center gap-1">
-                <span>•</span> {errors.anexo}
-              </p>
-            )}
-          </div>
+          )}
 
           {/* Ações */}
           <div className="pt-3 flex items-center justify-end gap-3 border-t border-[#22201B]/10">
@@ -331,11 +299,11 @@ export const CreateNoticePage: React.FC<CreateNoticePageProps> = ({
             </button>
             <button
               type="submit"
-              disabled={isSubmitting || isUploading}
-              className="bg-[#C1443A] hover:bg-[#a93a31] text-[#FAF7F0] text-xs font-semibold px-6 py-2.5 rounded-lg shadow-sm transition cursor-pointer flex items-center gap-1.5 disabled:opacity-50"
+              disabled={isSubmitting}
+              className="bg-[#1F3B32] hover:bg-[#274A3F] text-[#FAF7F0] text-xs font-semibold px-6 py-2.5 rounded-lg shadow-sm transition cursor-pointer flex items-center gap-1.5 disabled:opacity-50"
             >
-              <span>📌</span>
-              <span>{isUploading ? 'Enviando anexo...' : isSubmitting ? 'Publicando...' : 'Publicar Aviso no Mural'}</span>
+              <span>💾</span>
+              <span>{isSubmitting ? 'Salvando...' : 'Salvar Alterações'}</span>
             </button>
           </div>
         </form>
@@ -343,3 +311,4 @@ export const CreateNoticePage: React.FC<CreateNoticePageProps> = ({
     </div>
   );
 };
+

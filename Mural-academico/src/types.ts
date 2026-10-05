@@ -42,6 +42,8 @@ export interface Ocorrencia {
   id_solicitante: string;
   nome_solicitante: string;
   url_foto?: string;
+  parecer_atendimento?: string;
+  data_atualizacao?: string;
 }
 
 export type TabNavegacao =
@@ -49,6 +51,7 @@ export type TabNavegacao =
   | 'minhas-ocorrencias'
   | 'admin-ocorrencias'
   | 'admin-novo-aviso'
+  | 'admin-editar-aviso'
   | 'nova-ocorrencia'
   | 'login'
   | 'cadastro'
