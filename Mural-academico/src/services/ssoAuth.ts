@@ -56,6 +56,11 @@ export async function finishLogin(): Promise<string> {
 
   sessionStorage.removeItem('pkce_verifier');
   sessionStorage.removeItem('pkce_state');
+
+  // Guarda os JWT da sessão (somem ao fechar a aba) para inspeção no DevTools:
+  // Armazenamento > Session Storage. O refresh_token NÃO é guardado.
+  sessionStorage.setItem('id_token', data.id_token as string);
+  sessionStorage.setItem('access_token', data.access_token as string);
   return data.id_token as string;
 }
 
@@ -69,6 +74,8 @@ export function decodeJwt(token: string): Record<string, unknown> {
 
 /** Encerra também a sessão no Cognito. */
 export function cognitoLogout(): void {
+  sessionStorage.removeItem('id_token');
+  sessionStorage.removeItem('access_token');
   const url = new URL(`${domain}/logout`);
   url.search = new URLSearchParams({
     client_id: clientId,
