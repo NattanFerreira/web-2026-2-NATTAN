@@ -34,7 +34,6 @@ export const storageService = {
     nome: string;
     email_institucional: string;
     cargo: string;
-    senha?: string;
   }): Usuario {
     const todos = this.getUsuarios();
     const existing = todos.find(
@@ -55,10 +54,9 @@ export const storageService = {
       id_usuario: `usr-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`,
       nome: data.nome.trim(),
       email_institucional: data.email_institucional.toLowerCase().trim(),
-      perfil: 'LEITOR', // Regra: Cadastro público sempre cria perfil LEITOR. Administradores são cadastrados direto no código!
+      perfil: 'LEITOR', // Regra: novos usuários (primeiro login com Google) sempre são LEITOR. Administradores ficam em initialData.ts
       avatar,
       cargo: data.cargo.trim() || 'Discente · Comunidade Acadêmica',
-      senha: data.senha,
       data_cadastro: new Date().toISOString(),
     };
 
@@ -84,7 +82,7 @@ export const storageService = {
       console.error('Erro ao ler usuário logado do localStorage', e);
     }
     // Retorna Luiza Martins como padrão para testes iniciais
-    return USUARIOS_INICIAIS.find((u) => u.perfil === 'LEITOR') || USUARIOS_INICIAIS[0];
+    return null;
   },
 
   setCurrentUser(user: Usuario | null): void {

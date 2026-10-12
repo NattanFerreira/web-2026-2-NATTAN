@@ -2,6 +2,7 @@ import { useState, useMemo } from 'react';
 import type { Aviso, Ocorrencia, StatusOcorrencia, Usuario } from './types';
 import { storageService } from './services/storageService';
 import { authService } from './services/authService';
+import { cognitoLogout } from './services/ssoAuth';
 import { useRouter } from './router/useRouter';
 import { Navbar } from './components/Navbar';
 import { MuralPage } from './pages/MuralPage';
@@ -9,7 +10,6 @@ import { MyOccurrencesPage } from './pages/MyOccurrencesPage';
 import { AdminDashboardPage } from './pages/AdminDashboardPage';
 import { NoticeDetailPage } from './pages/NoticeDetailPage';
 import { LoginPage } from './pages/LoginPage';
-import { RegisterPage } from './pages/RegisterPage';
 import { CreateNoticePage } from './pages/CreateNoticePage';
 import { CreateOccurrencePage } from './pages/CreateOccurrencePage';
 import { OccurrenceDetailModal } from './components/OccurrenceDetailModal';
@@ -26,7 +26,6 @@ export function App() {
   const [ocorrencias, setOcorrencias] = useState<Ocorrencia[]>(() =>
     storageService.getOcorrencias()
   );
-  const [allUsers, setAllUsers] = useState<Usuario[]>(() => storageService.getUsuarios());
 
   // Modal para detalhamento rápido de ocorrência
   const [selectedOcorrencia, setSelectedOcorrencia] = useState<Ocorrencia | null>(null);
@@ -48,42 +47,15 @@ export function App() {
   );
 
   // Handlers de Autenticação
-  const handleLogin = (user: Usuario) => {
-    setCurrentUser(user);
-    showToast(`Bem-vindo(a), ${user.nome}! Autenticado como ${user.perfil}.`);
-    if (user.perfil === 'ADMINISTRADOR') {
-      navigate('admin-ocorrencias');
-    } else {
-      navigate('mural');
-    }
-  };
-
-  const handleRegister = (user: Usuario) => {
-    setCurrentUser(user);
-    setAllUsers(storageService.getUsuarios());
-    showToast(`Conta de Leitor criada com sucesso! Seja bem-vindo(a), ${user.nome}.`);
-    navigate('mural');
-  };
-
   const handleLogout = () => {
     authService.logout();
     setCurrentUser(null);
-    showToast('Sessão encerrada com sucesso.');
-    navigate('mural');
-  };
-
-  const handleSwitchUser = (user: Usuario) => {
-    authService.login({
-      email: user.email_institucional,
-      senha: user.senha || (user.perfil === 'ADMINISTRADOR' ? 'admin123' : 'aluno123'),
-    });
-    setCurrentUser(user);
-    showToast(
-      `Perfil alterado para ${user.nome} (${user.perfil === 'ADMINISTRADOR' ? 'Administrador' : 'Leitor'})`
-    );
-    if (user.perfil === 'ADMINISTRADOR' && currentTab === 'minhas-ocorrencias') {
-      navigate('admin-ocorrencias');
-    } else if (user.perfil === 'LEITOR' && (currentTab === 'admin-ocorrencias' || currentTab === 'admin-novo-aviso')) {
+    try {
+      // Encerra também a sessão no Cognito/Google e volta para "/"
+      cognitoLogout();
+    } catch {
+      // Sem configuração do Cognito (ex.: variáveis VITE_* ausentes): logout apenas local
+      showToast('Sessão encerrada com sucesso.');
       navigate('mural');
     }
   };
@@ -166,7 +138,6 @@ export function App() {
     setCurrentUser(authService.getCurrentUser());
     setAvisos(storageService.getAvisos());
     setOcorrencias(storageService.getOcorrencias());
-    setAllUsers(storageService.getUsuarios());
     showToast('Dados de demonstração restaurados com sucesso!');
     navigate('mural');
   };
@@ -209,8 +180,6 @@ export function App() {
         currentTab={currentTab}
         onNavigate={(tab) => navigate(tab)}
         currentUser={currentUser}
-        allUsers={allUsers}
-        onSwitchUser={handleSwitchUser}
         onLogout={handleLogout}
         totalOcorrenciasAbertas={totalAbertas}
       />
@@ -254,23 +223,8 @@ export function App() {
           />
         )}
 
-        {/* Rota: Autenticação (Login) */}
-        {currentTab === 'login' && (
-          <LoginPage
-            onSuccess={handleLogin}
-            onNavigateRegister={() => navigate('cadastro')}
-            onNavigateMural={() => navigate('mural')}
-          />
-        )}
-
-        {/* Rota: Cadastro de Usuário (Leitor) */}
-        {currentTab === 'cadastro' && (
-          <RegisterPage
-            onSuccess={handleRegister}
-            onNavigateLogin={() => navigate('login')}
-            onNavigateMural={() => navigate('mural')}
-          />
-        )}
+        {/* Rota: Autenticação (Login com Google) */}
+        {currentTab === 'login' && <LoginPage onNavigateMural={() => navigate('mural')} />}
 
         {/* Rota: Nova Ocorrência */}
         {currentTab === 'nova-ocorrencia' && (

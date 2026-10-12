@@ -7,7 +7,6 @@ export interface Usuario {
   perfil: PerfilUsuario;
   avatar: string;
   cargo: string;
-  senha?: string;
   data_cadastro?: string;
 }
 
@@ -54,7 +53,6 @@ export type TabNavegacao =
   | 'admin-editar-aviso'
   | 'nova-ocorrencia'
   | 'login'
-  | 'cadastro'
   | 'sobre'
   | 'detalhe-aviso';
 

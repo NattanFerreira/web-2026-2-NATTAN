@@ -6,8 +6,6 @@ interface NavbarProps {
   currentTab: TabNavegacao;
   onNavigate: (tab: TabNavegacao) => void;
   currentUser: Usuario | null;
-  allUsers: Usuario[];
-  onSwitchUser: (user: Usuario) => void;
   onLogout: () => void;
   totalOcorrenciasAbertas: number;
 }
@@ -16,8 +14,6 @@ export const Navbar: React.FC<NavbarProps> = ({
   currentTab,
   onNavigate,
   currentUser,
-  allUsers,
-  onSwitchUser,
   onLogout,
   totalOcorrenciasAbertas,
 }) => {
@@ -179,30 +175,6 @@ export const Navbar: React.FC<NavbarProps> = ({
                     </div>
                   </div>
 
-                  {/* Alternância Rápida para Teste / Avaliação */}
-                  <div className="px-4 py-2 bg-[#EDE1CB]/40 border-b border-[#22201B]/10">
-                    <label className="block text-[10px] font-bold uppercase tracking-wider text-[#5A554A] mb-1">
-                      Alternar Usuário para Demonstração:
-                    </label>
-                    <select
-                      value={currentUser.id_usuario}
-                      onChange={(e) => {
-                        const selected = allUsers.find((u) => u.id_usuario === e.target.value);
-                        if (selected) {
-                          onSwitchUser(selected);
-                          setIsUserMenuOpen(false);
-                        }
-                      }}
-                      className="w-full bg-[#FAF7F0] text-xs rounded border border-[#22201B]/20 p-1 font-sans focus:outline-none focus:ring-1 focus:ring-[#1F3B32] cursor-pointer"
-                    >
-                      {allUsers.map((u) => (
-                        <option key={u.id_usuario} value={u.id_usuario}>
-                          {u.nome} ({u.perfil === 'ADMINISTRADOR' ? 'Admin' : 'Leitor'})
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-
                   {/* Links do Menu */}
                   <div className="py-1">
                     {isAdmin && (
@@ -279,16 +251,6 @@ export const Navbar: React.FC<NavbarProps> = ({
                 }`}
               >
                 Entrar
-              </button>
-              <button
-                onClick={() => onNavigate('cadastro')}
-                className={`text-xs font-semibold px-3 py-1.5 rounded-lg border transition cursor-pointer ${
-                  currentTab === 'cadastro'
-                    ? 'bg-[#C1443A] border-[#C1443A] text-[#FAF7F0]'
-                    : 'border-[#FAF7F0]/40 text-[#FAF7F0] hover:bg-[#FAF7F0]/10'
-                }`}
-              >
-                Cadastre-se
               </button>
             </div>
           )}

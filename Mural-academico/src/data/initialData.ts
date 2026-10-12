@@ -8,7 +8,6 @@ export const USUARIOS_INICIAIS: Usuario[] = [
     perfil: 'ADMINISTRADOR',
     avatar: 'PR',
     cargo: 'Docente · Coordenação de Curso',
-    senha: 'admin123',
     data_cadastro: '2026-08-01T08:00:00',
   },
   {
@@ -18,7 +17,6 @@ export const USUARIOS_INICIAIS: Usuario[] = [
     perfil: 'ADMINISTRADOR',
     avatar: 'AD',
     cargo: 'Suporte & Gestão Acadêmica',
-    senha: 'admin123',
     data_cadastro: '2026-08-01T08:00:00',
   },
   {
@@ -28,7 +26,6 @@ export const USUARIOS_INICIAIS: Usuario[] = [
     perfil: 'LEITOR',
     avatar: 'LM',
     cargo: 'Discente · Ciência da Computação',
-    senha: 'aluno123',
     data_cadastro: '2026-09-01T10:00:00',
   },
 ];

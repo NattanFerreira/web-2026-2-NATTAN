@@ -1,58 +1,27 @@
 import React, { useState } from 'react';
-import type { Usuario } from '../types';
-import { authService } from '../services/authService';
-import { validation } from '../utils/validation';
 import { PinIcon } from '../components/PinIcon';
+import { startGoogleLogin } from '../services/ssoAuth';
 
 interface LoginPageProps {
-  onSuccess: (user: Usuario) => void;
-  onNavigateRegister: () => void;
   onNavigateMural: () => void;
 }
 
-export const LoginPage: React.FC<LoginPageProps> = ({
-  onSuccess,
-  onNavigateRegister,
-  onNavigateMural,
-}) => {
-  const [email, setEmail] = useState('');
-  const [senha, setSenha] = useState('');
-  const [errors, setErrors] = useState<Record<string, string>>({});
+export const LoginPage: React.FC<LoginPageProps> = ({ onNavigateMural }) => {
   const [serverError, setServerError] = useState<string | null>(null);
-  const [showPassword, setShowPassword] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isRedirecting, setIsRedirecting] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+  // Login com Google (via Amazon Cognito)
+  const handleGoogleLogin = async () => {
     setServerError(null);
-
-    const validationResult = validation.validateLogin({ email, senha });
-    if (!validationResult.isValid) {
-      setErrors(validationResult.errors);
-      return;
-    }
-
-    setIsSubmitting(true);
+    setIsRedirecting(true);
     try {
-      const user = authService.login({ email, senha });
-      onSuccess(user);
-    } catch (err: unknown) {
-      if (err instanceof Error) {
-        setServerError(err.message);
-      } else {
-        setServerError('Falha na autenticação. Verifique suas credenciais.');
-      }
-    } finally {
-      setIsSubmitting(false);
+      await startGoogleLogin(); // redireciona o navegador para o Cognito/Google
+    } catch {
+      setIsRedirecting(false);
+      setServerError(
+        'Não foi possível iniciar o login com Google. Verifique a configuração e tente novamente.'
+      );
     }
-  };
-
-  // Preenchimento rápido para avaliação
-  const handleQuickFill = (quickEmail: string, quickSenha: string) => {
-    setEmail(quickEmail);
-    setSenha(quickSenha);
-    setErrors({});
-    setServerError(null);
   };
 
   return (
@@ -80,161 +49,51 @@ export const LoginPage: React.FC<LoginPageProps> = ({
           </div>
           <h2 className="font-display text-2xl font-bold text-[#22201B]">Autenticação</h2>
           <p className="text-xs text-[#5A554A] mt-1">
-            Acesse o sistema com suas credenciais acadêmicas ou institucionais
+            Entre com sua conta Google institucional da UFERSA
           </p>
         </div>
 
         {serverError && (
-          <div className="mb-5 p-3 bg-[#C1443A]/10 border border-[#C1443A]/40 text-[#C1443A] rounded-lg text-xs font-semibold flex items-center gap-2">
+          <div
+            role="alert"
+            className="mb-5 p-3 bg-[#C1443A]/10 border border-[#C1443A]/40 text-[#C1443A] rounded-lg text-xs font-semibold flex items-center gap-2"
+          >
             <span>⚠️</span>
             <span>{serverError}</span>
           </div>
         )}
 
-        <form onSubmit={handleSubmit} noValidate className="space-y-4">
-          <div>
-            <label className="block text-xs font-semibold text-[#22201B] mb-1.5">
-              E-mail Institucional
-            </label>
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => {
-                setEmail(e.target.value);
-                if (errors.email) {
-                  setErrors((prev) => ({ ...prev, email: '' }));
-                }
-                if (serverError) setServerError(null);
-              }}
-              placeholder="exemplo@ufersa.edu.br"
-              className={`w-full bg-[#EDE1CB]/40 border rounded-lg px-3.5 py-2.5 text-sm text-[#22201B] placeholder-[#5A554A]/60 focus:outline-none focus:ring-1 transition ${
-                errors.email
-                  ? 'border-[#C1443A] focus:ring-[#C1443A] bg-[#C1443A]/5'
-                  : 'border-[#22201B]/20 focus:border-[#1F3B32] focus:ring-[#1F3B32]'
-              }`}
+        <button
+          type="button"
+          onClick={handleGoogleLogin}
+          disabled={isRedirecting}
+          className="w-full flex items-center justify-center gap-2.5 bg-white border border-[#22201B]/20 hover:border-[#1F3B32] hover:bg-[#FAF7F0] text-[#22201B] font-semibold text-xs py-2.5 rounded-lg shadow-sm transition cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          <svg width="16" height="16" viewBox="0 0 48 48" aria-hidden="true">
+            <path
+              fill="#EA4335"
+              d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"
             />
-            {errors.email && (
-              <p className="text-[11px] font-medium text-[#C1443A] mt-1 flex items-center gap-1">
-                <span>•</span> {errors.email}
-              </p>
-            )}
-          </div>
-
-          <div>
-            <div className="flex items-center justify-between mb-1.5">
-              <label className="block text-xs font-semibold text-[#22201B]">Senha</label>
-            </div>
-            <input
-              type={showPassword ? 'text' : 'password'}
-              value={senha}
-              onChange={(e) => {
-                setSenha(e.target.value);
-                if (errors.senha) {
-                  setErrors((prev) => ({ ...prev, senha: '' }));
-                }
-                if (serverError) setServerError(null);
-              }}
-              placeholder="Digite sua senha de acesso"
-              className={`w-full bg-[#EDE1CB]/40 border rounded-lg px-3.5 py-2.5 text-sm text-[#22201B] placeholder-[#5A554A]/60 focus:outline-none focus:ring-1 transition ${
-                errors.senha
-                  ? 'border-[#C1443A] focus:ring-[#C1443A] bg-[#C1443A]/5'
-                  : 'border-[#22201B]/20 focus:border-[#1F3B32] focus:ring-[#1F3B32]'
-              }`}
+            <path
+              fill="#4285F4"
+              d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"
             />
-            {errors.senha && (
-              <p className="text-[11px] font-medium text-[#C1443A] mt-1 flex items-center gap-1">
-                <span>•</span> {errors.senha}
-              </p>
-            )}
-          </div>
+            <path
+              fill="#FBBC05"
+              d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"
+            />
+            <path
+              fill="#34A853"
+              d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"
+            />
+          </svg>
+          {isRedirecting ? 'Redirecionando para o Google...' : 'Entrar com Google'}
+        </button>
 
-          <div className="flex items-center justify-between text-xs text-[#5A554A] pt-1">
-            <label className="flex items-center gap-2 cursor-pointer select-none">
-              <input
-                type="checkbox"
-                checked={showPassword}
-                onChange={(e) => setShowPassword(e.target.checked)}
-                className="rounded text-[#1F3B32] focus:ring-[#1F3B32]"
-              />
-              <span>Exibir senha</span>
-            </label>
-          </div>
-
-          <button
-            type="submit"
-            disabled={isSubmitting}
-            className="w-full bg-[#1F3B32] hover:bg-[#274A3F] text-[#FAF7F0] font-semibold text-xs py-2.5 rounded-lg shadow-sm hover:shadow transition flex items-center justify-center gap-2 cursor-pointer mt-2 disabled:opacity-50"
-          >
-            {isSubmitting ? 'Autenticando...' : 'Entrar no Sistema'}
-          </button>
-        </form>
-
-        {/* Linha divisória */}
-        <div className="relative my-6 border-t border-[#22201B]/15">
-          <span className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-[#FAF7F0] px-3 text-[11px] text-[#5A554A]">
-            ou
-          </span>
-        </div>
-
-        {/* Cadastro de novo leitor */}
-        <div className="text-center mb-6">
-          <p className="text-xs text-[#5A554A] mb-2">Ainda não possui cadastro?</p>
-          <button
-            type="button"
-            onClick={onNavigateRegister}
-            className="w-full border-1.5 border-[#1F3B32] text-[#1F3B32] hover:bg-[#1F3B32]/10 font-semibold text-xs py-2 rounded-lg transition cursor-pointer"
-          >
-            Cadastrar-se como Leitor / Discente
-          </button>
-        </div>
-
-        {/* Atalhos para avaliação / demonstração */}
-        <div className="bg-[#EDE1CB]/50 border border-[#22201B]/15 rounded-lg p-3.5 text-xs">
-          <div className="flex items-center justify-between mb-2">
-            <span className="font-semibold text-[#1F3B32] flex items-center gap-1.5">
-              <span>⚡</span> Contas configuradas no código:
-            </span>
-            <span className="text-[10px] text-[#5A554A] uppercase tracking-wider font-mono">
-              Clique para preencher
-            </span>
-          </div>
-
-          <div className="space-y-2">
-            <button
-              type="button"
-              onClick={() => handleQuickFill('renato.docente@ufersa.edu.br', 'admin123')}
-              className="w-full text-left p-2 rounded bg-[#FAF7F0] hover:bg-[#FAF7F0]/80 border border-[#22201B]/10 flex items-center justify-between group transition cursor-pointer"
-            >
-              <div>
-                <span className="font-semibold text-[#1F3B32] block">Prof. Renato</span>
-                <span className="text-[11px] text-[#5A554A]">
-                  renato.docente@ufersa.edu.br · (senha: admin123)
-                </span>
-              </div>
-              <span className="text-[10px] font-bold font-mono bg-[#1F3B32] text-[#FAF7F0] px-1.5 py-0.5 rounded">
-                ADMIN
-              </span>
-            </button>
-
-            <button
-              type="button"
-              onClick={() => handleQuickFill('luiza.martins@ufersa.edu.br', 'aluno123')}
-              className="w-full text-left p-2 rounded bg-[#FAF7F0] hover:bg-[#FAF7F0]/80 border border-[#22201B]/10 flex items-center justify-between group transition cursor-pointer"
-            >
-              <div>
-                <span className="font-semibold text-[#1F3B32] block">Luiza Martins</span>
-                <span className="text-[11px] text-[#5A554A]">
-                  luiza.martins@ufersa.edu.br · (senha: aluno123)
-                </span>
-              </div>
-              <span className="text-[10px] font-bold font-mono bg-[#35577A] text-[#FAF7F0] px-1.5 py-0.5 rounded">
-                LEITOR
-              </span>
-            </button>
-          </div>
-        </div>
+        <p className="text-[11px] text-[#5A554A] text-center mt-4">
+          Primeiro acesso? Sua conta de leitor é criada automaticamente ao entrar.
+        </p>
       </div>
     </div>
   );
 };
-

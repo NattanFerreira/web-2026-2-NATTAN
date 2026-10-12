@@ -31,10 +31,6 @@ function parseHash(hash: string): RouteInfo {
     return { tab: 'login', params: queryParams };
   }
 
-  if (segments[0] === 'cadastro') {
-    return { tab: 'cadastro', params: queryParams };
-  }
-
   if (segments[0] === 'minhas-ocorrencias') {
     return { tab: 'minhas-ocorrencias', params: queryParams };
   }
@@ -88,9 +84,6 @@ function buildHash(tab: TabNavegacao, params?: Record<string, string>): string {
       break;
     case 'login':
       base = '#/login';
-      break;
-    case 'cadastro':
-      base = '#/cadastro';
       break;
     case 'minhas-ocorrencias':
       base = '#/minhas-ocorrencias';
