@@ -8,6 +8,25 @@ export interface Usuario {
   avatar: string;
   cargo: string;
   data_cadastro?: string;
+  /** Hash PBKDF2 da senha (apenas contas de cadastro local). */
+  senha_hash?: string;
+  senha_salt?: string;
+  provedor?: 'local' | 'google';
+  bloqueado?: boolean;
+}
+
+export interface Comentario {
+  id_comentario: string;
+  id_aviso: string;
+  /** null = comentário raiz; senão, id do comentário respondido. */
+  id_pai: string | null;
+  id_autor: string;
+  nome_autor: string;
+  avatar_autor: string;
+  perfil_autor: PerfilUsuario;
+  conteudo: string;
+  data_criacao: string;
+  editado?: boolean;
 }
 
 export type CategoriaAviso = 'Ensino' | 'Infraestrutura' | 'Editais' | 'Eventos';
@@ -51,9 +70,9 @@ export type TabNavegacao =
   | 'admin-ocorrencias'
   | 'admin-novo-aviso'
   | 'admin-editar-aviso'
+  | 'admin-gestao'
   | 'nova-ocorrencia'
   | 'login'
-  | 'sobre'
   | 'detalhe-aviso';
 
 export interface RouteState {

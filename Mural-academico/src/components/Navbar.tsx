@@ -81,6 +81,19 @@ export const Navbar: React.FC<NavbarProps> = ({
 
           {isAdmin && (
             <button
+              onClick={() => onNavigate('admin-gestao')}
+              className={`pb-1 border-b-2 transition-colors cursor-pointer ${
+                currentTab === 'admin-gestao'
+                  ? 'border-[#C1443A] text-[#FAF7F0] font-semibold'
+                  : 'border-transparent text-[#FAF7F0]/75 hover:text-[#FAF7F0]'
+              }`}
+            >
+              Gestão
+            </button>
+          )}
+
+          {isAdmin && (
+            <button
               onClick={() => onNavigate('admin-ocorrencias')}
               className={`pb-1 border-b-2 transition-colors flex items-center gap-1.5 cursor-pointer ${
                 currentTab === 'admin-ocorrencias' || currentTab === 'admin-novo-aviso'
@@ -97,16 +110,6 @@ export const Navbar: React.FC<NavbarProps> = ({
             </button>
           )}
 
-          <button
-            onClick={() => onNavigate('sobre')}
-            className={`pb-1 border-b-2 transition-colors cursor-pointer ${
-              currentTab === 'sobre'
-                ? 'border-[#C1443A] text-[#FAF7F0] font-semibold'
-                : 'border-transparent text-[#FAF7F0]/75 hover:text-[#FAF7F0]'
-            }`}
-          >
-            Identidade & Sobre
-          </button>
         </nav>
 
         {/* Ações e Sessão do Usuário */}
@@ -119,14 +122,14 @@ export const Navbar: React.FC<NavbarProps> = ({
             >
               <span>+</span> Novo aviso
             </button>
-          ) : (
+          ) : currentUser ? (
             <button
               onClick={() => onNavigate('nova-ocorrencia')}
               className="bg-[#C1443A] hover:bg-[#a93a31] text-[#FAF7F0] text-xs font-semibold px-3 py-1.5 rounded-lg shadow transition cursor-pointer flex items-center gap-1"
             >
               <span>+</span> Ocorrência
             </button>
-          )}
+          ) : null}
 
           {/* Controle de Autenticação / Menu de Usuário */}
           {currentUser ? (
@@ -189,6 +192,17 @@ export const Navbar: React.FC<NavbarProps> = ({
                         <span className="text-[10px] font-mono bg-[#C1443A] text-white px-1.5 rounded-full">
                           {totalOcorrenciasAbertas}
                         </span>
+                      </button>
+                    )}
+                    {isAdmin && (
+                      <button
+                        onClick={() => {
+                          onNavigate('admin-gestao');
+                          setIsUserMenuOpen(false);
+                        }}
+                        className="w-full text-left px-4 py-2 text-xs font-semibold text-[#1F3B32] hover:bg-[#EDE1CB]/60 flex items-center gap-2 cursor-pointer"
+                      >
+                        <span>Gestão (postagens, comentários, usuários)</span>
                       </button>
                     )}
                     {isAdmin && (
@@ -294,14 +308,18 @@ export const Navbar: React.FC<NavbarProps> = ({
           </button>
         )}
 
-        <button
-          onClick={() => onNavigate('sobre')}
-          className={`px-3 py-1 rounded cursor-pointer ${
-            currentTab === 'sobre' ? 'bg-[#274A3F] font-bold text-[#FAF7F0]' : 'text-[#FAF7F0]/70'
-          }`}
-        >
-          Identidade
-        </button>
+        {isAdmin && (
+          <button
+            onClick={() => onNavigate('admin-gestao')}
+            className={`px-3 py-1 rounded cursor-pointer ${
+              currentTab === 'admin-gestao'
+                ? 'bg-[#274A3F] font-bold text-[#FAF7F0]'
+                : 'text-[#FAF7F0]/70'
+            }`}
+          >
+            Gestão
+          </button>
+        )}
 
         {!currentUser && (
           <button

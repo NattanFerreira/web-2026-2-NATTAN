@@ -19,7 +19,12 @@ function parseHash(hash: string): RouteInfo {
     });
   }
 
-  if (segments.length === 0 || segments[0] === '' || segments[0] === 'mural') {
+  // Tela inicial do sistema: login (com opção de visitante)
+  if (segments.length === 0 || segments[0] === '') {
+    return { tab: 'login', params: queryParams };
+  }
+
+  if (segments[0] === 'mural') {
     return { tab: 'mural', params: queryParams };
   }
 
@@ -36,6 +41,9 @@ function parseHash(hash: string): RouteInfo {
   }
 
   if (segments[0] === 'admin') {
+    if (segments[1] === 'gestao') {
+      return { tab: 'admin-gestao', params: queryParams };
+    }
     if (segments[1] === 'avisos' && segments[2] === 'novo') {
       return { tab: 'admin-novo-aviso', params: queryParams };
     }
@@ -65,10 +73,6 @@ function parseHash(hash: string): RouteInfo {
     return { tab: 'nova-ocorrencia', params: queryParams };
   }
 
-  if (segments[0] === 'sobre') {
-    return { tab: 'sobre', params: queryParams };
-  }
-
   // Padrão fallback
   return { tab: 'mural', params: queryParams };
 }
@@ -91,6 +95,9 @@ function buildHash(tab: TabNavegacao, params?: Record<string, string>): string {
     case 'admin-ocorrencias':
       base = '#/admin';
       break;
+    case 'admin-gestao':
+      base = '#/admin/gestao';
+      break;
     case 'admin-novo-aviso':
       base = '#/admin/avisos/novo';
       break;
@@ -99,9 +106,6 @@ function buildHash(tab: TabNavegacao, params?: Record<string, string>): string {
       break;
     case 'nova-ocorrencia':
       base = '#/ocorrencias/nova';
-      break;
-    case 'sobre':
-      base = '#/sobre';
       break;
     default:
       base = '#/mural';

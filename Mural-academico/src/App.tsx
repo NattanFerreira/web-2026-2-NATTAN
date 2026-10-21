@@ -1,6 +1,6 @@
-import { useState, useMemo } from 'react';
-import type { Aviso, Ocorrencia, StatusOcorrencia, Usuario } from './types';
-import { storageService } from './services/storageService';
+import { useState, useMemo, useEffect, useCallback } from 'react';
+import type { Aviso, Comentario, Ocorrencia, StatusOcorrencia, Usuario } from './types';
+import { storageService, isAdminEmail } from './services/storageService';
 import { authService } from './services/authService';
 import { cognitoLogout } from './services/ssoAuth';
 import { useRouter } from './router/useRouter';
@@ -12,8 +12,9 @@ import { NoticeDetailPage } from './pages/NoticeDetailPage';
 import { LoginPage } from './pages/LoginPage';
 import { CreateNoticePage } from './pages/CreateNoticePage';
 import { CreateOccurrencePage } from './pages/CreateOccurrencePage';
+import { EditNoticePage } from './pages/EditNoticePage';
+import { AdminManagePage } from './pages/AdminManagePage';
 import { OccurrenceDetailModal } from './components/OccurrenceDetailModal';
-import { IdentityGuideModal } from './components/IdentityGuideModal';
 
 export function App() {
   const { currentTab, params, navigate } = useRouter();
@@ -21,11 +22,32 @@ export function App() {
   const [currentUser, setCurrentUser] = useState<Usuario | null>(() =>
     authService.getCurrentUser()
   );
+  // Visitante: navega sem conta, apenas leitura (vale enquanto a aba estiver aberta)
+  const [isGuest, setIsGuest] = useState<boolean>(() => storageService.isGuest());
 
   const [avisos, setAvisos] = useState<Aviso[]>(() => storageService.getAvisos());
+  const [comentarios, setComentarios] = useState<Comentario[]>(() =>
+    storageService.getComentarios()
+  );
+  const [usuarios, setUsuarios] = useState<Usuario[]>(() => storageService.getUsuarios());
   const [ocorrencias, setOcorrencias] = useState<Ocorrencia[]>(() =>
     storageService.getOcorrencias()
   );
+
+  // Sem sessão nem modo visitante, a única tela disponível é o login
+  const needsLogin = !currentUser && !isGuest;
+
+  // Usuário já autenticado não precisa ver a tela de login
+  useEffect(() => {
+    if (currentUser && currentTab === 'login') {
+      navigate(currentUser.perfil === 'ADMINISTRADOR' ? 'admin-gestao' : 'mural');
+    }
+  }, [currentUser, currentTab, navigate]);
+
+  // Garante que a URL reflita a tela de login quando não há sessão
+  useEffect(() => {
+    if (needsLogin && currentTab !== 'login') navigate('login');
+  }, [needsLogin, currentTab, navigate]);
 
   // Modal para detalhamento rápido de ocorrência
   const [selectedOcorrencia, setSelectedOcorrencia] = useState<Ocorrencia | null>(null);
@@ -47,18 +69,93 @@ export function App() {
   );
 
   // Handlers de Autenticação
+  const handleAuthenticated = (user: Usuario) => {
+    setCurrentUser(user);
+    setIsGuest(false);
+    setUsuarios(storageService.getUsuarios());
+    showToast(`Bem-vindo(a), ${user.nome.split(' ')[0]}!`);
+    navigate(user.perfil === 'ADMINISTRADOR' ? 'admin-gestao' : 'mural');
+  };
+
+  const handleGuest = () => {
+    authService.enterAsGuest();
+    setIsGuest(true);
+    navigate('mural');
+  };
+
   const handleLogout = () => {
     authService.logout();
     setCurrentUser(null);
+    setIsGuest(false);
     try {
-      // Encerra também a sessão no Cognito/Google e volta para "/"
+      // Encerra também a sessão no Cognito/Google e volta para "/" (tela de login)
       cognitoLogout();
     } catch {
       // Sem configuração do Cognito (ex.: variáveis VITE_* ausentes): logout apenas local
-      showToast('Sessão encerrada com sucesso.');
-      navigate('mural');
+      navigate('login');
     }
   };
+
+  // Handlers de Comentários (apenas autenticados; exclusão: autor ou administrador)
+  const handleAddComentario = (id_aviso: string, conteudo: string, id_pai: string | null) => {
+    if (!currentUser) return;
+    storageService.addComentario({ id_aviso, id_pai, conteudo, autor: currentUser });
+    setComentarios(storageService.getComentarios());
+  };
+
+  const handleDeleteComentario = (id_comentario: string) => {
+    const alvo = comentarios.find((c) => c.id_comentario === id_comentario);
+    if (!alvo || !currentUser) return;
+    if (currentUser.perfil !== 'ADMINISTRADOR' && alvo.id_autor !== currentUser.id_usuario) return;
+    storageService.deleteComentario(id_comentario);
+    setComentarios(storageService.getComentarios());
+    showToast('Comentário removido.');
+  };
+
+  // Handlers de gestão de usuários (somente administrador)
+  const isAdminUser = currentUser?.perfil === 'ADMINISTRADOR';
+
+  const podeGerenciarUsuario = (id: string): Usuario | undefined => {
+    if (!isAdminUser || !currentUser || id === currentUser.id_usuario) return undefined;
+    const alvo = storageService.getUsuarioPorId(id);
+    if (!alvo || isAdminEmail(alvo.email_institucional)) return undefined;
+    return alvo;
+  };
+
+  const handleChangePerfil = (id: string, perfil: Usuario['perfil']) => {
+    if (!podeGerenciarUsuario(id)) return;
+    storageService.updateUsuario(id, { perfil });
+    setUsuarios(storageService.getUsuarios());
+    showToast(`Perfil alterado para ${perfil === 'ADMINISTRADOR' ? 'Administrador' : 'Leitor'}.`);
+  };
+
+  const handleToggleBloqueio = (id: string) => {
+    const alvo = podeGerenciarUsuario(id);
+    if (!alvo) return;
+    storageService.updateUsuario(id, { bloqueado: !alvo.bloqueado });
+    setUsuarios(storageService.getUsuarios());
+    showToast(alvo.bloqueado ? 'Usuário desbloqueado.' : 'Usuário bloqueado.');
+  };
+
+  const handleDeleteUsuario = (id: string) => {
+    if (!podeGerenciarUsuario(id)) return;
+    storageService.deleteUsuario(id);
+    setUsuarios(storageService.getUsuarios());
+    showToast('Usuário excluído.');
+  };
+
+  const handleUpdateAviso = async (id: string, data: Partial<Aviso>) => {
+    if (!isAdminUser) return;
+    storageService.updateAviso(id, data);
+    setAvisos(storageService.getAvisos());
+    showToast('Aviso atualizado com sucesso.');
+    navigate('detalhe-aviso', { id });
+  };
+
+  const getAvisoById = useCallback(
+    (id: string) => storageService.getAvisos().find((a) => a.id_aviso === id),
+    []
+  );
 
   // Handlers de Avisos
   const handleCreateAviso = (data: {
@@ -78,8 +175,10 @@ export function App() {
   };
 
   const handleDeleteAviso = (id_aviso: string) => {
+    if (!isAdminUser) return;
     storageService.deleteAviso(id_aviso);
     setAvisos(storageService.getAvisos());
+    setComentarios(storageService.getComentarios());
     showToast('Aviso removido do mural.');
     navigate('mural');
   };
@@ -133,14 +232,6 @@ export function App() {
     showToast('Registro de ocorrência excluído.');
   };
 
-  const handleResetData = () => {
-    storageService.resetAllData();
-    setCurrentUser(authService.getCurrentUser());
-    setAvisos(storageService.getAvisos());
-    setOcorrencias(storageService.getOcorrencias());
-    showToast('Dados de demonstração restaurados com sucesso!');
-    navigate('mural');
-  };
 
   // Aviso selecionado para a página de detalhe
   const currentAviso = useMemo(() => {
@@ -152,37 +243,17 @@ export function App() {
 
   return (
     <div className="min-h-screen flex flex-col bg-[#EDE1CB] text-[#22201B]">
-      {/* Barra de Domínio Institucional e Metadados do Projeto */}
-      <div className="bg-[#182e27] text-[#FAF7F0]/80 px-4 py-1.5 text-[11px] font-mono flex items-center justify-between border-b border-[#274A3F]">
-        <div className="flex items-center gap-2">
-          <span className="w-2 h-2 rounded-full bg-[#FAF7F0]/30 inline-block" />
-          <span className="w-2 h-2 rounded-full bg-[#FAF7F0]/30 inline-block" />
-          <span className="w-2 h-2 rounded-full bg-[#FAF7F0]/30 inline-block" />
-          <span className="bg-[#FAF7F0]/10 px-2.5 py-0.5 rounded text-[10.5px] ml-2">
-            mural.ufersa.edu.br
-          </span>
-          <span className="text-[10px] text-[#FAF7F0]/50 hidden md:inline">
-            · AWS Serverless Architecture (Amplify, API Gateway, Lambda, DynamoDB, S3)
-          </span>
-        </div>
-        <div className="text-[10.5px] hidden sm:flex items-center gap-3">
-          <span>UFERSA · Universidade Federal Rural do Semi-Árido</span>
-          {currentUser && (
-            <span className="bg-[#274A3F] px-2 py-0.5 rounded text-[10px] font-bold">
-              {currentUser.perfil}
-            </span>
-          )}
-        </div>
-      </div>
 
-      {/* Barra de Navegação Superior Principal */}
-      <Navbar
-        currentTab={currentTab}
-        onNavigate={(tab) => navigate(tab)}
-        currentUser={currentUser}
-        onLogout={handleLogout}
-        totalOcorrenciasAbertas={totalAbertas}
-      />
+      {/* Barra de Navegação Superior (oculta na tela de login) */}
+      {!needsLogin && currentTab !== 'login' && (
+        <Navbar
+          currentTab={currentTab}
+          onNavigate={(tab) => navigate(tab)}
+          currentUser={currentUser}
+          onLogout={handleLogout}
+          totalOcorrenciasAbertas={totalAbertas}
+        />
+      )}
 
       {/* Notificação Toast Flutuante */}
       {toastMessage && (
@@ -200,8 +271,13 @@ export function App() {
 
       {/* Conteúdo Principal da Página (com fundo texturizado do Quadro) */}
       <main className="flex-1 cork-texture">
+        {/* Rota: Autenticação — tela inicial (entrar, cadastrar, Google ou visitante) */}
+        {(needsLogin || currentTab === 'login') && (
+          <LoginPage onAuthenticated={handleAuthenticated} onGuest={handleGuest} />
+        )}
+
         {/* Rota: Mural Público */}
-        {currentTab === 'mural' && (
+        {!needsLogin && currentTab === 'mural' && (
           <MuralPage
             avisos={avisos}
             currentUser={currentUser}
@@ -213,21 +289,57 @@ export function App() {
         )}
 
         {/* Rota: Detalhe do Aviso */}
-        {currentTab === 'detalhe-aviso' && (
+        {!needsLogin && currentTab === 'detalhe-aviso' && (
           <NoticeDetailPage
             aviso={currentAviso}
             currentUser={currentUser}
+            comentarios={comentarios.filter((c) => c.id_aviso === params.id)}
+            onAddComentario={handleAddComentario}
+            onDeleteComentario={handleDeleteComentario}
+            onNavigateLogin={() => navigate('login')}
             onBack={() => navigate('mural')}
             onReportOccurrence={(loc) => navigate('nova-ocorrencia', { local: loc })}
             onDeleteAviso={handleDeleteAviso}
+            onEditAviso={(id) => navigate('admin-editar-aviso', { id })}
           />
         )}
 
-        {/* Rota: Autenticação (Login com Google) */}
-        {currentTab === 'login' && <LoginPage onNavigateMural={() => navigate('mural')} />}
+        {/* Rota: Editar Aviso (Admin) */}
+        {!needsLogin && currentTab === 'admin-editar-aviso' && params.id && (
+          <EditNoticePage
+            avisoId={params.id}
+            currentUser={currentUser}
+            getAviso={getAvisoById}
+            onSubmit={handleUpdateAviso}
+            onNavigateLogin={() => navigate('login')}
+            onNavigateMural={() => navigate('mural')}
+          />
+        )}
+
+        {/* Rota: Gestão do sistema (Admin) */}
+        {!needsLogin && currentTab === 'admin-gestao' && (
+          <AdminManagePage
+            currentUser={currentUser}
+            avisos={avisos}
+            comentarios={comentarios}
+            usuarios={usuarios}
+            idsEditaveis={new Set(storageService.getUsuariosRegistrados().map((u) => u.id_usuario))}
+            onOpenAviso={(id) => navigate('detalhe-aviso', { id })}
+            onEditAviso={(id) => navigate('admin-editar-aviso', { id })}
+            onDeleteAviso={handleDeleteAviso}
+            onNewAviso={() => navigate('admin-novo-aviso')}
+            onDeleteComentario={handleDeleteComentario}
+            onChangePerfil={handleChangePerfil}
+            onToggleBloqueio={handleToggleBloqueio}
+            onDeleteUsuario={handleDeleteUsuario}
+            onNavigateOcorrencias={() => navigate('admin-ocorrencias')}
+            onNavigateLogin={() => navigate('login')}
+            onNavigateMural={() => navigate('mural')}
+          />
+        )}
 
         {/* Rota: Nova Ocorrência */}
-        {currentTab === 'nova-ocorrencia' && (
+        {!needsLogin && currentTab === 'nova-ocorrencia' && (
           <CreateOccurrencePage
             currentUser={currentUser}
             defaultLocation={params.local}
@@ -238,7 +350,7 @@ export function App() {
         )}
 
         {/* Rota: Publicar Novo Aviso (Admin) */}
-        {currentTab === 'admin-novo-aviso' && (
+        {!needsLogin && currentTab === 'admin-novo-aviso' && (
           <CreateNoticePage
             currentUser={currentUser}
             onSubmit={handleCreateAviso}
@@ -248,7 +360,7 @@ export function App() {
         )}
 
         {/* Rota: Minhas Ocorrências (Leitor) */}
-        {currentTab === 'minhas-ocorrencias' && (
+        {!needsLogin && currentTab === 'minhas-ocorrencias' && (
           <MyOccurrencesPage
             ocorrencias={ocorrencias}
             currentUser={currentUser}
@@ -259,7 +371,7 @@ export function App() {
         )}
 
         {/* Rota: Painel Administrativo de Ocorrências (Admin) */}
-        {currentTab === 'admin-ocorrencias' && (
+        {!needsLogin && currentTab === 'admin-ocorrencias' && (
           <AdminDashboardPage
             ocorrencias={ocorrencias}
             currentUser={currentUser}
@@ -271,8 +383,6 @@ export function App() {
           />
         )}
 
-        {/* Rota: Sobre e Guia de Identidade Visual */}
-        {currentTab === 'sobre' && <IdentityGuideModal onResetData={handleResetData} />}
       </main>
 
       {/* Modal de Detalhes da Ocorrência */}
@@ -287,27 +397,13 @@ export function App() {
 
       {/* Rodapé Institucional */}
       <footer className="bg-[#1F3B32] text-[#FAF7F0]/80 text-xs py-5 px-4 border-t border-[#274A3F]">
-        <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3 text-center sm:text-left">
+        <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2 text-center sm:text-left">
           <div>
             <span className="font-display font-bold text-sm text-[#FAF7F0]">Quadro</span> —
-            Gerenciador de Avisos e Ocorrências Acadêmicas
-            <p className="text-[11px] text-[#FAF7F0]/60 mt-0.5">
-              Projeto Final · Avaliação 03 · Nattan Ferreira Lopes · UFERSA
-            </p>
+            Mural de avisos e ocorrências acadêmicas
           </div>
-          <div className="flex items-center gap-4 text-[11px]">
-            <button
-              onClick={() => navigate('sobre')}
-              className="hover:text-[#FAF7F0] underline cursor-pointer"
-            >
-              Guia da Identidade Visual & Arquitetura
-            </button>
-            <button
-              onClick={handleResetData}
-              className="hover:text-[#FAF7F0] underline cursor-pointer text-[#C1443A]"
-            >
-              Restaurar dados demo
-            </button>
+          <div className="text-[11px] text-[#FAF7F0]/60">
+            © {new Date().getFullYear()} UFERSA · Universidade Federal Rural do Semi-Árido
           </div>
         </div>
       </footer>

@@ -1,9 +1,14 @@
 import React from 'react';
-import type { Aviso, Usuario } from '../types';
+import type { Aviso, Comentario, Usuario } from '../types';
+import { CommentsSection } from '../components/CommentsSection';
 
 interface NoticeDetailPageProps {
   aviso: Aviso | undefined;
   currentUser: Usuario | null;
+  comentarios: Comentario[];
+  onAddComentario: (id_aviso: string, conteudo: string, id_pai: string | null) => void;
+  onDeleteComentario: (id_comentario: string) => void;
+  onNavigateLogin: () => void;
   onBack: () => void;
   onReportOccurrence: (location: string) => void;
   onDeleteAviso?: (id: string) => void;
@@ -13,6 +18,10 @@ interface NoticeDetailPageProps {
 export const NoticeDetailPage: React.FC<NoticeDetailPageProps> = ({
   aviso,
   currentUser,
+  comentarios,
+  onAddComentario,
+  onDeleteComentario,
+  onNavigateLogin,
   onBack,
   onReportOccurrence,
   onDeleteAviso,
@@ -59,19 +68,6 @@ export const NoticeDetailPage: React.FC<NoticeDetailPageProps> = ({
           <span>←</span> Voltar ao Mural
         </button>
 
-        {isAdmin && onDeleteAviso && (
-          <button
-            onClick={() => {
-              if (confirm('Tem certeza de que deseja remover este aviso do mural?')) {
-                onDeleteAviso(aviso.id_aviso);
-                onBack();
-              }
-            }}
-            className="text-xs font-semibold text-[#C1443A] hover:bg-[#C1443A]/10 px-3 py-1 rounded transition border border-[#C1443A]/30 cursor-pointer"
-          >
-            🗑️ Excluir comunicado
-          </button>
-        )}
         <div className="flex items-center gap-2">
           {isAdmin && onEditAviso && (
             <button
@@ -154,6 +150,15 @@ export const NoticeDetailPage: React.FC<NoticeDetailPageProps> = ({
               </a>
             </div>
           )}
+
+          {/* Comentários e respostas */}
+          <CommentsSection
+            comentarios={comentarios}
+            currentUser={currentUser}
+            onAdd={(conteudo, id_pai) => onAddComentario(aviso.id_aviso, conteudo, id_pai)}
+            onDelete={onDeleteComentario}
+            onNavigateLogin={onNavigateLogin}
+          />
         </div>
 
         {/* Sidebar com metadados e atalho de ocorrência */}
@@ -176,7 +181,7 @@ export const NoticeDetailPage: React.FC<NoticeDetailPageProps> = ({
                 <dd className="font-semibold text-[#1F3B32]">{dataFormatada}</dd>
               </div>
               <div className="flex justify-between py-1">
-                <dt className="text-[#5A554A]">Anexo AWS S3</dt>
+                <dt className="text-[#5A554A]">Anexo</dt>
                 <dd className="font-semibold text-[#1F3B32]">
                   {aviso.nome_anexo ? 'Disponível (PDF)' : 'Nenhum'}
                 </dd>

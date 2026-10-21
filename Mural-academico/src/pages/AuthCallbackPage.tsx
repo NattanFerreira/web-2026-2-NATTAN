@@ -1,9 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { finishLogin, decodeJwt } from '../services/ssoAuth';
 import { storageService } from '../services/storageService';
-
-const ALLOWED = ((import.meta.env.VITE_ALLOWED_EMAIL_DOMAINS as string) ?? '')
-  .split(',').map((d) => d.trim().toLowerCase()).filter(Boolean);
+import { isAllowedDomain } from '../services/authService';
 
 export function AuthCallbackPage() {
   const [error, setError] = useState<string | null>(null);
@@ -19,20 +17,18 @@ export function AuthCallbackPage() {
 
       if (!email || String(claims.email_verified) !== 'true')
         throw new Error('E-mail não verificado pelo Google.');
-      if (ALLOWED.length && !ALLOWED.includes(email.split('@')[1]))
-        throw new Error('Use sua conta institucional.');
+      if (!isAllowedDomain(email)) throw new Error('Use sua conta institucional.');
 
-      // Admins pré-cadastrados em initialData.ts mantêm o perfil; novos viram LEITOR
-      const user =
-        storageService.getUsuarioByEmail(email) ??
-        storageService.addUsuario({
-          nome: String(claims.name ?? email.split('@')[0]),
-          email_institucional: email,
-          cargo: '',
-        });
+      // E-mails em VITE_ADMIN_EMAILS entram como ADMINISTRADOR; os demais viram LEITOR.
+      const user = storageService.upsertGoogleUser(
+        String(claims.name ?? email.split('@')[0]),
+        email
+      );
+      if (user.bloqueado) throw new Error('Esta conta foi bloqueada pelo administrador.');
 
+      storageService.setGuest(false);
       storageService.setCurrentUser(user);
-      window.location.replace(user.perfil === 'ADMINISTRADOR' ? '/#/admin' : '/#/mural');
+      window.location.replace(user.perfil === 'ADMINISTRADOR' ? '/#/admin/gestao' : '/#/mural');
     })().catch((e: Error) => setError(e.message));
   }, []);
 

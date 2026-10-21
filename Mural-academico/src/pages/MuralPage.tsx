@@ -111,13 +111,17 @@ export const MuralPage: React.FC<MuralPageProps> = ({
           >
             <span>+</span> Publicar novo aviso
           </button>
-        ) : (
+        ) : currentUser ? (
           <button
             onClick={onOpenCreateOcorrencia}
             className="border-1.5 border-[#1F3B32] text-[#1F3B32] hover:bg-[#1F3B32] hover:text-[#FAF7F0] text-xs font-semibold px-4 py-1.5 rounded-lg transition shadow-xs cursor-pointer flex items-center gap-1.5"
           >
             <span>+</span> Registrar ocorrência
           </button>
+        ) : (
+          <span className="text-[11px] text-[#5A554A] font-mono bg-[#FAF7F0]/70 px-3 py-1.5 rounded-lg border border-[#22201B]/10">
+            👁️ Modo visitante · somente leitura
+          </span>
         )}
       </div>
 
