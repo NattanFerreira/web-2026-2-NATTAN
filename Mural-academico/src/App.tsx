@@ -15,6 +15,7 @@ import { CreateOccurrencePage } from './pages/CreateOccurrencePage';
 import { EditNoticePage } from './pages/EditNoticePage';
 import { AdminManagePage } from './pages/AdminManagePage';
 import { OccurrenceDetailModal } from './components/OccurrenceDetailModal';
+import { LINKS_UTEIS, ENDERECO_CAMPUS } from './data/links';
 
 export function App() {
   const { currentTab, params, navigate } = useRouter();
@@ -395,15 +396,97 @@ export function App() {
         />
       )}
 
-      {/* Rodapé Institucional */}
-      <footer className="bg-[#1F3B32] text-[#FAF7F0]/80 text-xs py-5 px-4 border-t border-[#274A3F]">
-        <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2 text-center sm:text-left">
-          <div>
-            <span className="font-display font-bold text-sm text-[#FAF7F0]">Quadro</span> —
-            Mural de avisos e ocorrências acadêmicas
+      {/* Rodapé Comunitário do Campus */}
+      <footer className="bg-[#182e27] text-[#FAF7F0]/85 text-xs border-t border-[#274A3F] mt-auto">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8 pb-8 border-b border-[#274A3F]">
+            {/* Coluna 1: Sobre o Quadro */}
+            <div>
+              <div className="flex items-center gap-2 mb-2">
+                <span className="font-display font-bold text-lg text-[#FAF7F0]">Quadro</span>
+                <span className="text-[10px] font-semibold bg-[#274A3F] text-[#FAF7F0]/90 px-2 py-0.5 rounded">
+                  De alunos para alunos 🎓
+                </span>
+              </div>
+              <p className="text-[#FAF7F0]/70 text-[11.5px] leading-relaxed mb-3">
+                Mural colaborativo do campus para avisos gerais, editais de monitoria, eventos,
+                achados & perdidos e problemas nas salas ou blocos. Um ponto de encontro pensado
+                para quem vive o dia a dia da universidade.
+              </p>
+              <p className="text-[11px] text-[#FAF7F0]/50 font-mono leading-tight">
+                {ENDERECO_CAMPUS}
+              </p>
+            </div>
+
+            {/* Coluna 2: Atalhos Acadêmicos */}
+            <div>
+              <h4 className="font-semibold text-xs uppercase tracking-wider text-[#FAF7F0] mb-3 font-mono">
+                Dia a Dia Acadêmico
+              </h4>
+              <ul className="space-y-2">
+                {LINKS_UTEIS.slice(0, 3).map((link) => (
+                  <li key={link.label}>
+                    <a
+                      href={link.href}
+                      target="_blank"
+                      rel="noreferrer"
+                      download={link.download}
+                      className="text-[#FAF7F0]/75 hover:text-white transition flex items-center justify-between text-xs group"
+                    >
+                      <span className="flex items-center gap-2">
+                        <span>{link.icon}</span>
+                        <span>{link.label}</span>
+                      </span>
+                      {link.download ? (
+                        <span className="text-[9.5px] bg-[#C1443A] text-white px-1.5 py-0.2 rounded font-mono">
+                          PDF
+                        </span>
+                      ) : (
+                        <span className="text-[10px] opacity-0 group-hover:opacity-100 transition-opacity">
+                          ↗
+                        </span>
+                      )}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            {/* Coluna 3: Apoio & Comunidade */}
+            <div>
+              <h4 className="font-semibold text-xs uppercase tracking-wider text-[#FAF7F0] mb-3 font-mono">
+                Apoio no Campus
+              </h4>
+              <ul className="space-y-2">
+                {LINKS_UTEIS.slice(3).map((link) => (
+                  <li key={link.label}>
+                    <a
+                      href={link.href}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="text-[#FAF7F0]/75 hover:text-white transition flex items-center justify-between text-xs group"
+                    >
+                      <span className="flex items-center gap-2">
+                        <span>{link.icon}</span>
+                        <span>{link.label}</span>
+                      </span>
+                      <span className="text-[10px] opacity-0 group-hover:opacity-100 transition-opacity">
+                        ↗
+                      </span>
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
           </div>
-          <div className="text-[11px] text-[#FAF7F0]/60">
-            © {new Date().getFullYear()} UFERSA · Universidade Federal Rural do Semi-Árido
+
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-2 text-center sm:text-left text-[11px] text-[#FAF7F0]/60">
+            <div>
+              Quadro Acadêmico · Plataforma comunitária estudantil da UFERSA.
+            </div>
+            <div>
+              Criado e mantido pela comunidade discente · Campus Mossoró
+            </div>
           </div>
         </div>
       </footer>

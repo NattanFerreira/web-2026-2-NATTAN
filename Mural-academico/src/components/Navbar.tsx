@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import type { TabNavegacao, Usuario } from '../types';
 import { PinIcon } from './PinIcon';
+import { LINKS_UTEIS } from '../data/links';
 
 interface NavbarProps {
   currentTab: TabNavegacao;
@@ -18,14 +19,23 @@ export const Navbar: React.FC<NavbarProps> = ({
   totalOcorrenciasAbertas,
 }) => {
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
+  const [isLinksOpen, setIsLinksOpen] = useState(false);
+  const [isMobileLinksOpen, setIsMobileLinksOpen] = useState(false);
+
   const menuRef = useRef<HTMLDivElement>(null);
+  const linksRef = useRef<HTMLDivElement>(null);
+
   const isAdmin = currentUser?.perfil === 'ADMINISTRADOR';
 
-  // Fecha dropdown ao clicar fora
+  // Fecha dropdowns ao clicar fora
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+      const target = event.target as Node;
+      if (menuRef.current && !menuRef.current.contains(target)) {
         setIsUserMenuOpen(false);
+      }
+      if (linksRef.current && !linksRef.current.contains(target)) {
+        setIsLinksOpen(false);
       }
     };
     document.addEventListener('mousedown', handleClickOutside);
@@ -38,7 +48,7 @@ export const Navbar: React.FC<NavbarProps> = ({
         {/* Brand / Logo */}
         <div
           onClick={() => onNavigate('mural')}
-          className="flex items-center gap-2.5 cursor-pointer hover:opacity-95 transition-opacity"
+          className="flex items-center gap-2.5 cursor-pointer hover:opacity-95 transition-opacity shrink-0"
         >
           <PinIcon size={26} variant="light" />
           <div className="flex items-center gap-2">
@@ -54,7 +64,7 @@ export const Navbar: React.FC<NavbarProps> = ({
         </div>
 
         {/* Menus de Navegação Desktop */}
-        <nav className="hidden md:flex items-center gap-6 text-sm font-medium">
+        <nav className="hidden md:flex items-center gap-5 text-xs lg:text-sm font-medium">
           <button
             onClick={() => onNavigate('mural')}
             className={`pb-1 border-b-2 transition-colors cursor-pointer ${
@@ -110,6 +120,99 @@ export const Navbar: React.FC<NavbarProps> = ({
             </button>
           )}
 
+          {/* Divisor sutil entre rotas internas e links institucionais */}
+          <span className="h-4 w-px bg-[#FAF7F0]/20 inline-block" />
+
+          {/* Links Institucionais Rápidos */}
+          <a
+            href="https://sso.ufersa.edu.br/sso-server/login"
+            target="_blank"
+            rel="noreferrer"
+            className="text-[#FAF7F0]/80 hover:text-[#FAF7F0] transition flex items-center gap-1.5 cursor-pointer py-1"
+            title="Acesso ao SIGAA (Matrículas e Notas)"
+          >
+            <span>SIGAA</span>
+            <span className="text-[10px] opacity-70">↗</span>
+          </a>
+
+          <a
+            href="https://ru.ufersa.edu.br/"
+            target="_blank"
+            rel="noreferrer"
+            className="text-[#FAF7F0]/80 hover:text-[#FAF7F0] transition flex items-center gap-1.5 cursor-pointer py-1"
+            title="Restaurante Universitário da UFERSA"
+          >
+            <span>RU</span>
+            <span className="text-[10px] opacity-70">↗</span>
+          </a>
+
+          <a
+            href="/calendario-academico.pdf"
+            target="_blank"
+            rel="noreferrer"
+            download="calendario-academico-ufersa-2026.pdf"
+            className="text-[#FAF7F0]/80 hover:text-[#FAF7F0] transition flex items-center gap-1 cursor-pointer py-1"
+            title="Baixar Calendário Acadêmico em PDF"
+          >
+            <span>Calendário</span>
+            <span className="text-[10px] bg-[#C1443A] text-white px-1 py-0.2 rounded font-mono font-bold">
+              PDF
+            </span>
+          </a>
+
+          {/* Menu Dropdown de Atalhos do Estudante */}
+          <div className="relative" ref={linksRef}>
+            <button
+              type="button"
+              onClick={() => setIsLinksOpen(!isLinksOpen)}
+              className="flex items-center gap-1 text-[#FAF7F0]/85 hover:text-[#FAF7F0] py-1 cursor-pointer"
+            >
+              <span>Atalhos do Campus</span>
+              <span className="text-[9px] opacity-70">▼</span>
+            </button>
+
+            {isLinksOpen && (
+              <div className="absolute left-0 mt-2 w-72 bg-[#FAF7F0] text-[#22201B] rounded-xl shadow-2xl border border-[#22201B]/20 py-2 z-50 animate-in fade-in zoom-in-95">
+                <div className="px-4 py-2 border-b border-[#22201B]/10">
+                  <p className="text-[11px] font-bold uppercase tracking-wider text-[#1F3B32] font-mono">
+                    Atalhos do Estudante
+                  </p>
+                  <p className="text-[10.5px] text-[#5A554A]">
+                    Links úteis para a rotina diária no campus
+                  </p>
+                </div>
+
+                <div className="py-1">
+                  {LINKS_UTEIS.map((link) => (
+                    <a
+                      key={link.label}
+                      href={link.href}
+                      target="_blank"
+                      rel="noreferrer"
+                      download={link.download}
+                      onClick={() => setIsLinksOpen(false)}
+                      className="px-4 py-2 hover:bg-[#EDE1CB]/60 flex items-start gap-2.5 transition text-left cursor-pointer group"
+                    >
+                      <span className="text-base shrink-0 group-hover:scale-110 transition-transform">
+                        {link.icon}
+                      </span>
+                      <div className="min-w-0 flex-1">
+                        <div className="flex items-center justify-between">
+                          <span className="text-xs font-semibold text-[#1F3B32] group-hover:text-[#C1443A] transition-colors">
+                            {link.label}
+                          </span>
+                          <span className="text-[10px] text-[#5A554A]">↗</span>
+                        </div>
+                        <p className="text-[10.5px] text-[#5A554A] leading-tight mt-0.5 line-clamp-1">
+                          {link.descricao}
+                        </p>
+                      </div>
+                    </a>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
         </nav>
 
         {/* Ações e Sessão do Usuário */}
@@ -202,7 +305,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                         }}
                         className="w-full text-left px-4 py-2 text-xs font-semibold text-[#1F3B32] hover:bg-[#EDE1CB]/60 flex items-center gap-2 cursor-pointer"
                       >
-                        <span>Gestão (postagens, comentários, usuários)</span>
+                        <span>Gestão do Sistema</span>
                       </button>
                     )}
                     {isAdmin && (
@@ -321,6 +424,16 @@ export const Navbar: React.FC<NavbarProps> = ({
           </button>
         )}
 
+        {/* Botão de Atalhos no Mobile */}
+        <button
+          onClick={() => setIsMobileLinksOpen(!isMobileLinksOpen)}
+          className={`px-3 py-1 rounded cursor-pointer ${
+            isMobileLinksOpen ? 'bg-[#274A3F] font-bold text-[#FAF7F0]' : 'text-[#FAF7F0]/70'
+          }`}
+        >
+          Atalhos ▾
+        </button>
+
         {!currentUser && (
           <button
             onClick={() => onNavigate('login')}
@@ -332,6 +445,38 @@ export const Navbar: React.FC<NavbarProps> = ({
           </button>
         )}
       </div>
+
+      {/* Drawer / Modal móvel de links úteis */}
+      {isMobileLinksOpen && (
+        <div className="md:hidden bg-[#FAF7F0] text-[#22201B] border-t border-[#22201B]/20 p-4 shadow-xl">
+          <div className="flex items-center justify-between mb-3 pb-2 border-b border-[#22201B]/10">
+            <span className="text-xs font-bold text-[#1F3B32] uppercase tracking-wider font-mono">
+              Atalhos Úteis do Estudante
+            </span>
+            <button
+              onClick={() => setIsMobileLinksOpen(false)}
+              className="text-xs text-[#5A554A] font-bold px-2 py-0.5"
+            >
+              ✕
+            </button>
+          </div>
+          <div className="grid grid-cols-2 gap-2">
+            {LINKS_UTEIS.map((link) => (
+              <a
+                key={link.label}
+                href={link.href}
+                target="_blank"
+                rel="noreferrer"
+                download={link.download}
+                className="p-2.5 rounded-lg border border-[#22201B]/15 bg-white hover:bg-[#EDE1CB]/40 flex items-center gap-2 text-xs font-medium text-[#1F3B32]"
+              >
+                <span>{link.icon}</span>
+                <span className="truncate">{link.label}</span>
+              </a>
+            ))}
+          </div>
+        </div>
+      )}
     </header>
   );
 };

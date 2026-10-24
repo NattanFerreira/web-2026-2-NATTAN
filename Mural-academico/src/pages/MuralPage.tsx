@@ -55,11 +55,16 @@ export const MuralPage: React.FC<MuralPageProps> = ({
       {/* Page Header */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-6">
         <div>
-          <h2 className="font-display text-3xl font-bold text-[#1F3B32] tracking-tight">
-            Mural de avisos
-          </h2>
+          <div className="flex items-center gap-2">
+            <h2 className="font-display text-3xl font-bold text-[#1F3B32] tracking-tight">
+              Mural do Campus
+            </h2>
+            <span className="text-[10px] font-semibold bg-[#1F3B32]/10 text-[#1F3B32] px-2 py-0.5 rounded-full hidden sm:inline-block">
+              De alunos para alunos 🎓
+            </span>
+          </div>
           <p className="text-xs sm:text-sm text-[#5A554A] mt-1 font-sans">
-            {avisos.length} avisos oficiais publicados este semestre no campus
+            {avisos.length} avisos gerais, monitorias, eventos e comunicados compartilhados no campus
           </p>
         </div>
 
@@ -69,7 +74,7 @@ export const MuralPage: React.FC<MuralPageProps> = ({
             type="text"
             value={busca}
             onChange={(e) => setBusca(e.target.value)}
-            placeholder="🔍 Buscar por palavra-chave, bloco ou edital…"
+            placeholder="🔍 Buscar por avisos, salas, blocos ou eventos…"
             className="w-full bg-[#FAF7F0] border-1.5 border-[#1F3B32] rounded-xl px-4 py-2.5 text-xs text-[#22201B] placeholder-[#5A554A]/70 shadow-xs focus:outline-none focus:ring-2 focus:ring-[#1F3B32]/30"
           />
           {busca && (

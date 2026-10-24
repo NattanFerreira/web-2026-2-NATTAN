@@ -77,16 +77,21 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onAuthenticated, onGuest }
         </div>
 
         <div className="text-center mb-5 pt-2">
-          <div className="inline-flex items-center justify-center gap-2 mb-2">
+          <div className="inline-flex items-center justify-center gap-2 mb-1.5">
             <PinIcon size={24} variant="dark" />
             <span className="font-display text-2xl font-bold text-[#1F3B32]">Quadro</span>
+          </div>
+          <div className="mb-2">
+            <span className="inline-block text-[10.5px] font-semibold text-[#1F3B32] bg-[#1F3B32]/10 px-2.5 py-0.5 rounded-full">
+              Mural do Campus · De alunos para alunos 🎓
+            </span>
           </div>
           <h1 className="font-display text-2xl font-bold text-[#22201B]">
             {modo === 'entrar' ? 'Entrar' : 'Criar conta'}
           </h1>
           <p className="text-xs text-[#5A554A] mt-1">
             {modo === 'entrar'
-              ? 'Acesse para comentar e interagir nos avisos'
+              ? 'Acesse para comentar, responder e interagir nos avisos'
               : 'Cadastre-se com seu e-mail institucional da UFERSA'}
           </p>
         </div>
