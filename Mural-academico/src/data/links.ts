@@ -28,13 +28,13 @@ export const LINKS_UTEIS: LinkUtil[] = [
     download: true,
   },
   {
-    label: 'Portal UFERSA',
-    href: 'https://ufersa.edu.br/',
+    label: 'Portal UFERSA · Pau dos Ferros',
+    href: 'https://paudosferros.ufersa.edu.br/',
     icon: '🏛️',
-    descricao: 'Notícias, editais e informações gerais da universidade',
+    descricao: 'Notícias, editais e informações do Campus Pau dos Ferros',
   },
   {
-    label: 'Biblioteca Central (SISBI)',
+    label: 'Biblioteca do Campus (SISBI)',
     href: 'https://biblioteca.ufersa.edu.br/',
     icon: '📚',
     descricao: 'Busca no acervo, renovação online e salas de estudo',
@@ -48,4 +48,4 @@ export const LINKS_UTEIS: LinkUtil[] = [
 ];
 
 export const ENDERECO_CAMPUS =
-  'Campus Mossoró · Av. Francisco Mota, 572 · Bairro Costa e Silva · Mossoró/RN · CEP 59625-900';
+  'Campus Pau dos Ferros · Rodovia BR-226, Km 405 · Bairro São Geraldo · Pau dos Ferros/RN · CEP 59900-000';

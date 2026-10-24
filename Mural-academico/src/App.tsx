@@ -491,7 +491,7 @@ export function App() {
               Quadro Acadêmico · Plataforma comunitária estudantil da UFERSA.
             </div>
             <div>
-              Criado e mantido pela comunidade discente · Campus Mossoró
+              Criado e mantido pela comunidade discente · Campus Pau dos Ferros
             </div>
           </div>
         </div>
