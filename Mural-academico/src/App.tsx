@@ -15,6 +15,7 @@ import { CreateOccurrencePage } from './pages/CreateOccurrencePage';
 import { EditNoticePage } from './pages/EditNoticePage';
 import { AdminManagePage } from './pages/AdminManagePage';
 import { OccurrenceDetailModal } from './components/OccurrenceDetailModal';
+import { GeminiChatWidget } from './components/GeminiChatWidget';
 import { LINKS_UTEIS, ENDERECO_CAMPUS } from './data/links';
 
 export function App() {
@@ -394,6 +395,11 @@ export function App() {
           currentUser={currentUser}
           onUpdateStatus={handleUpdateOcorrenciaStatus}
         />
+      )}
+
+      {/* Assistente de Chat via WebSocket + AWS Lambda + Google Gemini */}
+      {!needsLogin && currentTab !== 'login' && (
+        <GeminiChatWidget currentUser={currentUser} />
       )}
 
       {/* Rodapé Comunitário do Campus */}

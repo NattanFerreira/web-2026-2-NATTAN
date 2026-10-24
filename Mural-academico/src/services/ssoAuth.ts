@@ -57,11 +57,22 @@ export async function finishLogin(): Promise<string> {
   sessionStorage.removeItem('pkce_verifier');
   sessionStorage.removeItem('pkce_state');
 
-  // Guarda os JWT da sessão (somem ao fechar a aba) para inspeção no DevTools:
-  // Armazenamento > Session Storage. O refresh_token NÃO é guardado.
+  // Guarda os JWT da sessão para inspeção no DevTools e autenticação no WebSocket.
   sessionStorage.setItem('id_token', data.id_token as string);
   sessionStorage.setItem('access_token', data.access_token as string);
+  localStorage.setItem('cognito_id_token', data.id_token as string);
+  localStorage.setItem('cognito_access_token', data.access_token as string);
   return data.id_token as string;
+}
+
+/** Retorna o token JWT do Cognito (access_token ou id_token) da sessão atual. */
+export function getCognitoAccessToken(): string | null {
+  return (
+    sessionStorage.getItem('access_token') ||
+    sessionStorage.getItem('id_token') ||
+    localStorage.getItem('cognito_access_token') ||
+    localStorage.getItem('cognito_id_token')
+  );
 }
 
 /** Lê os claims do id_token. Não valida a assinatura: o token veio direto
@@ -76,6 +87,8 @@ export function decodeJwt(token: string): Record<string, unknown> {
 export function cognitoLogout(): void {
   sessionStorage.removeItem('id_token');
   sessionStorage.removeItem('access_token');
+  localStorage.removeItem('cognito_id_token');
+  localStorage.removeItem('cognito_access_token');
   const url = new URL(`${domain}/logout`);
   url.search = new URLSearchParams({
     client_id: clientId,
