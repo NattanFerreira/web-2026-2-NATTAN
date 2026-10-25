@@ -1,5 +1,0 @@
-Faça um ajuste no seu projeto, onde um usuário logado no Amazon Cognito irá gerar tokens de acesso. Após a autenticação, o frontend estabelece uma conexão WebSocket autenticada com o Amazon API Gateway do tipo WebSocket. Em seguida, envie uma pergunta pelo chat. O API Gateway encaminha a mensagem para uma função AWS Lambda por meio da rota $default. A Lambda processa a mensagem e consulta a API do Google Gemini. O Gemini gera uma resposta para a pergunta e a função Lambda envia a resposta ao usuário por meio da API de gerenciamento de conexões do API Gateway. O frontend recebe a resposta pelo WebSocket e a apresenta na interface. Abra a inspeção de página e tire print:
-
-- Mostre a conexão estabelecida com o WebSocket onde o formato do DNS é api.SEUNOME.NOMEGRUPO.web.ufersa.dev.br;
-- O envio da mensagem processada na função lambda;
-- O frontend apresentando a mensagem ao usuário, onde tem o campo de endereço do navegador SEUNOME.NOMEGRUPO.web.ufersa.dev.br.
