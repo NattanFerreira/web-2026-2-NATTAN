@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import type { Usuario } from '../types';
-import { getCognitoAccessToken, startGoogleLogin } from '../services/ssoAuth';
+import { getCognitoAccessToken, getCognitoIdToken, startGoogleLogin } from '../services/ssoAuth';
+import { uploadProfileImage, fetchProfileImage } from '../services/profileService';
 
 interface ChatMessage {
   id: string;
@@ -34,8 +35,42 @@ export const GeminiChatWidget: React.FC<GeminiChatWidgetProps> = ({ currentUser 
 
   const wsRef = useRef<WebSocket | null>(null);
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const [isUploading, setIsUploading] = useState(false);
 
-  const token = getCognitoAccessToken();
+  const token = getCognitoIdToken() || getCognitoAccessToken();
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (!token) {
+      alert('Faça login com o Google/Cognito para enviar a imagem de perfil.');
+      return;
+    }
+
+    setIsUploading(true);
+    try {
+      const res = await uploadProfileImage(file);
+      await fetchProfileImage();
+
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: `upload-${Date.now()}`,
+          sender: 'system',
+          text: `📸 Imagem enviada com sucesso para /profile e gravada no S3!\nChave: ${res.key}`,
+          timestamp: new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }),
+        },
+      ]);
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : String(err);
+      alert(`Falha no upload da imagem: ${msg}`);
+    } finally {
+      setIsUploading(false);
+      if (fileInputRef.current) fileInputRef.current.value = '';
+    }
+  };
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -293,11 +328,27 @@ export const GeminiChatWidget: React.FC<GeminiChatWidgetProps> = ({ currentUser 
             <div ref={messagesEndRef} />
           </div>
 
-          {/* Campo de envio de pergunta */}
+          {/* Campo de envio de pergunta e upload de imagem */}
           <form
             onSubmit={handleSend}
             className="p-2.5 bg-[#FAF7F0] border-t border-[#22201B]/15 flex items-center gap-2"
           >
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*"
+              className="hidden"
+              onChange={handleImageUpload}
+            />
+            <button
+              type="button"
+              onClick={() => fileInputRef.current?.click()}
+              disabled={isUploading}
+              title="Enviar imagem para o S3 via /profile (POST fetch + Cognito JWT)"
+              className="bg-[#EDE1CB] hover:bg-[#dfd1b8] text-[#1F3B32] p-2 rounded-lg text-xs font-semibold cursor-pointer shrink-0 disabled:opacity-50"
+            >
+              {isUploading ? '⏳' : '📷'}
+            </button>
             <input
               type="text"
               value={input}

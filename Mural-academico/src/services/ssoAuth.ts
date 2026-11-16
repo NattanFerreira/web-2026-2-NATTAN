@@ -75,6 +75,16 @@ export function getCognitoAccessToken(): string | null {
   );
 }
 
+/** Retorna especificamente o ID Token JWT do Cognito (usado pelo Cognito Authorizer no API Gateway). */
+export function getCognitoIdToken(): string | null {
+  return (
+    sessionStorage.getItem('id_token') ||
+    localStorage.getItem('cognito_id_token') ||
+    sessionStorage.getItem('access_token') ||
+    localStorage.getItem('cognito_access_token')
+  );
+}
+
 /** Lê os claims do id_token. Não valida a assinatura: o token veio direto
  *  do endpoint do Cognito, por HTTPS, na troca do code com PKCE. */
 export function decodeJwt(token: string): Record<string, unknown> {
