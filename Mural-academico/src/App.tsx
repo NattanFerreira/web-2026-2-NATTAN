@@ -14,6 +14,8 @@ import { CreateNoticePage } from './pages/CreateNoticePage';
 import { CreateOccurrencePage } from './pages/CreateOccurrencePage';
 import { EditNoticePage } from './pages/EditNoticePage';
 import { AdminManagePage } from './pages/AdminManagePage';
+import { ProfilePage } from './pages/ProfilePage';
+import { getUserProfile } from './services/profileService';
 import { OccurrenceDetailModal } from './components/OccurrenceDetailModal';
 import { GeminiChatWidget } from './components/GeminiChatWidget';
 import { LINKS_UTEIS, ENDERECO_CAMPUS } from './data/links';
@@ -50,6 +52,37 @@ export function App() {
   useEffect(() => {
     if (needsLogin && currentTab !== 'login') navigate('login');
   }, [needsLogin, currentTab, navigate]);
+
+  // Sincroniza foto e dados do perfil salvos no S3 e DynamoDB ao iniciar sessão
+  useEffect(() => {
+    if (!currentUser) return;
+    let active = true;
+    getUserProfile()
+      .then((remote) => {
+        if (!active || !remote) return;
+        setCurrentUser((prev) => {
+          if (!prev) return prev;
+          const updated: Usuario = {
+            ...prev,
+            nome: remote.nome || prev.nome,
+            cargo: remote.cargo || prev.cargo,
+            curso: remote.curso || prev.curso,
+            matricula: remote.matricula || prev.matricula,
+            telefone: remote.telefone || prev.telefone,
+            bio: remote.bio || prev.bio,
+            foto_url: remote.fotoBase64 || prev.foto_url,
+          };
+          storageService.setCurrentUser(updated);
+          return updated;
+        });
+      })
+      .catch(() => {
+        // Ignora silenciosamente caso ainda não haja perfil salvo no DynamoDB
+      });
+    return () => {
+      active = false;
+    };
+  }, [currentUser?.id_usuario]);
 
   // Modal para detalhamento rápido de ocorrência
   const [selectedOcorrencia, setSelectedOcorrencia] = useState<Ocorrencia | null>(null);
@@ -287,6 +320,19 @@ export function App() {
             onOpenCreateAviso={() => navigate('admin-novo-aviso')}
             onOpenCreateOcorrencia={() => navigate('nova-ocorrencia')}
             onDeleteAviso={handleDeleteAviso}
+          />
+        )}
+
+        {/* Rota: Meu Perfil (S3 + DynamoDB via PUT /profile) */}
+        {!needsLogin && currentTab === 'perfil' && (
+          <ProfilePage
+            currentUser={currentUser}
+            onUserUpdated={(updated) => {
+              setCurrentUser(updated);
+              setUsuarios(storageService.getUsuarios());
+              showToast('Perfil e foto de perfil atualizados no S3 e DynamoDB!');
+            }}
+            onNavigateMural={() => navigate('mural')}
           />
         )}
 

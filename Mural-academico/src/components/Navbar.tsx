@@ -76,6 +76,19 @@ export const Navbar: React.FC<NavbarProps> = ({
             Mural
           </button>
 
+          {currentUser && (
+            <button
+              onClick={() => onNavigate('perfil')}
+              className={`pb-1 border-b-2 transition-colors cursor-pointer ${
+                currentTab === 'perfil'
+                  ? 'border-[#C1443A] text-[#FAF7F0] font-semibold'
+                  : 'border-transparent text-[#FAF7F0]/75 hover:text-[#FAF7F0]'
+              }`}
+            >
+              Meu Perfil
+            </button>
+          )}
+
           {currentUser?.perfil === 'LEITOR' && (
             <button
               onClick={() => onNavigate('minhas-ocorrencias')}
@@ -243,10 +256,18 @@ export const Navbar: React.FC<NavbarProps> = ({
                 className="flex items-center gap-2 pl-2 border-l border-[#274A3F] hover:opacity-90 transition cursor-pointer"
               >
                 <div
-                  className="w-8 h-8 rounded-full bg-[#C1443A] text-[#FAF7F0] flex items-center justify-center text-xs font-bold shrink-0 shadow-inner"
+                  className="w-8 h-8 rounded-full bg-[#C1443A] text-[#FAF7F0] flex items-center justify-center text-xs font-bold shrink-0 shadow-inner overflow-hidden border border-[#FAF7F0]/30"
                   title={currentUser.nome}
                 >
-                  {currentUser.avatar}
+                  {currentUser.foto_url ? (
+                    <img
+                      src={currentUser.foto_url}
+                      alt={currentUser.nome}
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    currentUser.avatar
+                  )}
                 </div>
                 <div className="hidden sm:flex flex-col text-left">
                   <span className="text-xs font-semibold text-[#FAF7F0] leading-tight line-clamp-1 max-w-[120px]">
@@ -283,6 +304,15 @@ export const Navbar: React.FC<NavbarProps> = ({
 
                   {/* Links do Menu */}
                   <div className="py-1">
+                    <button
+                      onClick={() => {
+                        onNavigate('perfil');
+                        setIsUserMenuOpen(false);
+                      }}
+                      className="w-full text-left px-4 py-2 text-xs font-semibold text-[#1F3B32] hover:bg-[#EDE1CB]/60 flex items-center justify-between cursor-pointer"
+                    >
+                      <span>👤 Meu Perfil (S3 & DynamoDB)</span>
+                    </button>
                     {isAdmin && (
                       <button
                         onClick={() => {
@@ -384,6 +414,17 @@ export const Navbar: React.FC<NavbarProps> = ({
         >
           Mural
         </button>
+
+        {currentUser && (
+          <button
+            onClick={() => onNavigate('perfil')}
+            className={`px-3 py-1 rounded cursor-pointer ${
+              currentTab === 'perfil' ? 'bg-[#274A3F] font-bold text-[#FAF7F0]' : 'text-[#FAF7F0]/70'
+            }`}
+          >
+            Perfil
+          </button>
+        )}
 
         {currentUser?.perfil === 'LEITOR' && (
           <button

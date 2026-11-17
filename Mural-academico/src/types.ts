@@ -7,6 +7,11 @@ export interface Usuario {
   perfil: PerfilUsuario;
   avatar: string;
   cargo: string;
+  curso?: string;
+  matricula?: string;
+  telefone?: string;
+  bio?: string;
+  foto_url?: string;
   data_cadastro?: string;
   /** Hash PBKDF2 da senha (apenas contas de cadastro local). */
   senha_hash?: string;
@@ -66,6 +71,7 @@ export interface Ocorrencia {
 
 export type TabNavegacao =
   | 'mural'
+  | 'perfil'
   | 'minhas-ocorrencias'
   | 'admin-ocorrencias'
   | 'admin-novo-aviso'

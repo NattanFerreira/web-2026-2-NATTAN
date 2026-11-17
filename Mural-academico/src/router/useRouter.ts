@@ -28,6 +28,10 @@ function parseHash(hash: string): RouteInfo {
     return { tab: 'mural', params: queryParams };
   }
 
+  if (segments[0] === 'perfil' || segments[0] === 'profile') {
+    return { tab: 'perfil', params: queryParams };
+  }
+
   if (segments[0] === 'aviso' && segments[1]) {
     return { tab: 'detalhe-aviso', params: { ...queryParams, id: segments[1] } };
   }
@@ -82,6 +86,9 @@ function buildHash(tab: TabNavegacao, params?: Record<string, string>): string {
   switch (tab) {
     case 'mural':
       base = '#/mural';
+      break;
+    case 'perfil':
+      base = '#/perfil';
       break;
     case 'detalhe-aviso':
       base = `#/aviso/${params?.id || ''}`;
