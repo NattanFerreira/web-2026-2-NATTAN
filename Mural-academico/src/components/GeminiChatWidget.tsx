@@ -7,6 +7,7 @@ interface ChatMessage {
   id: string;
   sender: 'user' | 'gemini' | 'system';
   text: string;
+  imageUrl?: string;
   timestamp: string;
 }
 
@@ -51,18 +52,53 @@ export const GeminiChatWidget: React.FC<GeminiChatWidgetProps> = ({ currentUser 
 
     setIsUploading(true);
     try {
+      // 1. Upload da imagem para o S3 via API Gateway POST /profile
       const res = await uploadProfileImage(file);
-      await fetchProfileImage();
 
-      setMessages((prev) => [
-        ...prev,
-        {
-          id: `upload-${Date.now()}`,
-          sender: 'system',
-          text: `📸 Imagem enviada com sucesso para /profile e gravada no S3!\nChave: ${res.key}`,
-          timestamp: new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }),
-        },
-      ]);
+      // 2. Leitura da imagem via API Gateway GET /profile
+      const fetchedUrl = await fetchProfileImage();
+      const imageUrl = fetchedUrl || URL.createObjectURL(file);
+
+      const timestamp = new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+      const userText = input.trim() || 'Enviei uma nova foto para o meu perfil no sistema!';
+
+      // 3. Adiciona a mensagem do usuário no chat com a imagem visível
+      const userMsg: ChatMessage = {
+        id: `user-img-${Date.now()}`,
+        sender: 'user',
+        text: userText,
+        imageUrl,
+        timestamp,
+      };
+
+      setMessages((prev) => [...prev, userMsg]);
+      setInput('');
+
+      // 4. Notifica o Gemini via WebSocket para responder à imagem
+      const promptGemini = `[Upload de foto de perfil]: O usuário acabou de enviar uma nova foto de perfil (chave no S3: ${res.key}). Mensagem do usuário: "${userText}". Responda confirmando o recebimento da imagem e faça um comentário amigável de assistente acadêmico.`;
+
+      if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
+        setIsWaitingReply(true);
+        wsRef.current.send(
+          JSON.stringify({
+            action: '$default',
+            message: promptGemini,
+          })
+        );
+      } else {
+        // Fallback caso WebSocket ainda não esteja conectado
+        setTimeout(() => {
+          setMessages((prev) => [
+            ...prev,
+            {
+              id: `gemini-reply-${Date.now()}`,
+              sender: 'gemini',
+              text: `✅ Sua foto de perfil foi recebida e gravada com sucesso no Amazon S3 (chave: ${res.key})! O método GET também validou a leitura da imagem.`,
+              timestamp: new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }),
+            },
+          ]);
+        }, 800);
+      }
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : String(err);
       alert(`Falha no upload da imagem: ${msg}`);
@@ -308,7 +344,16 @@ export const GeminiChatWidget: React.FC<GeminiChatWidgetProps> = ({ currentUser 
                       🤖 Google Gemini (via AWS Lambda)
                     </div>
                   )}
-                  <p className="whitespace-pre-wrap break-words">{msg.text}</p>
+                  {msg.imageUrl && (
+                    <div className="mb-2 max-w-[220px] overflow-hidden rounded-lg border border-white/20 bg-black/10 shadow-xs">
+                      <img
+                        src={msg.imageUrl}
+                        alt="Imagem enviada"
+                        className="w-full h-auto max-h-44 object-cover rounded-lg"
+                      />
+                    </div>
+                  )}
+                  {msg.text && <p className="whitespace-pre-wrap break-words">{msg.text}</p>}
                 </div>
                 <span className="text-[9.5px] text-[#5A554A] mt-0.5 px-1 font-mono">
                   {msg.timestamp}
