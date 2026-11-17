@@ -46,7 +46,7 @@ export const GeminiChatWidget: React.FC<GeminiChatWidgetProps> = ({ currentUser 
     if (!file) return;
 
     if (!token) {
-      alert('Faça login com o Google/Cognito para enviar a imagem de perfil.');
+      alert('Faça login com o Google/Cognito para enviar a imagem para análise.');
       return;
     }
 
@@ -60,7 +60,7 @@ export const GeminiChatWidget: React.FC<GeminiChatWidgetProps> = ({ currentUser 
       const imageUrl = fetchedUrl || URL.createObjectURL(file);
 
       const timestamp = new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
-      const userText = input.trim() || 'Enviei uma nova foto para o meu perfil no sistema!';
+      const userText = input.trim() || 'Enviei uma imagem para você analisar! Pode verificar?';
 
       // 3. Adiciona a mensagem do usuário no chat com a imagem visível
       const userMsg: ChatMessage = {
@@ -74,8 +74,8 @@ export const GeminiChatWidget: React.FC<GeminiChatWidgetProps> = ({ currentUser 
       setMessages((prev) => [...prev, userMsg]);
       setInput('');
 
-      // 4. Notifica o Gemini via WebSocket para responder à imagem
-      const promptGemini = `[Upload de foto de perfil]: O usuário acabou de enviar uma nova foto de perfil (chave no S3: ${res.key}). Mensagem do usuário: "${userText}". Responda confirmando o recebimento da imagem e faça um comentário amigável de assistente acadêmico.`;
+      // 4. Notifica o Gemini via WebSocket com o contexto da imagem
+      const promptGemini = `[Imagem anexada para análise]: O usuário enviou uma imagem para o sistema (armazenada no S3 em: ${res.key}). Mensagem do usuário: "${userText}". Por favor, confirme o recebimento do arquivo e responda como assistente acadêmico analisando a solicitação do usuário.`;
 
       if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
         setIsWaitingReply(true);
@@ -93,7 +93,7 @@ export const GeminiChatWidget: React.FC<GeminiChatWidgetProps> = ({ currentUser 
             {
               id: `gemini-reply-${Date.now()}`,
               sender: 'gemini',
-              text: `✅ Sua foto de perfil foi recebida e gravada com sucesso no Amazon S3 (chave: ${res.key})! O método GET também validou a leitura da imagem.`,
+              text: `✅ Sua imagem foi recebida e gravada com sucesso no Amazon S3 (chave: ${res.key})! O método GET também validou a leitura da imagem para processamento da IA.`,
               timestamp: new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }),
             },
           ]);
@@ -389,7 +389,7 @@ export const GeminiChatWidget: React.FC<GeminiChatWidgetProps> = ({ currentUser 
               type="button"
               onClick={() => fileInputRef.current?.click()}
               disabled={isUploading}
-              title="Enviar imagem para o S3 via /profile (POST fetch + Cognito JWT)"
+              title="Anexar imagem para análise da IA (POST /profile no API Gateway)"
               className="bg-[#EDE1CB] hover:bg-[#dfd1b8] text-[#1F3B32] p-2 rounded-lg text-xs font-semibold cursor-pointer shrink-0 disabled:opacity-50"
             >
               {isUploading ? '⏳' : '📷'}

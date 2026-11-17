@@ -11,13 +11,13 @@ export interface UploadProfileResponse {
 }
 
 /**
- * Envia uma imagem de perfil para a rota /profile da API Gateway via POST e fetch.
+ * Envia uma imagem para a rota /profile da API Gateway via POST e fetch.
  * O arquivo é enviado diretamente no corpo da requisição e protegido pelo token JWT do Cognito.
  */
 export async function uploadProfileImage(file: File): Promise<UploadProfileResponse> {
   const token = getCognitoIdToken() || getCognitoAccessToken();
   if (!token) {
-    throw new Error('Usuário não autenticado. Faça login para enviar a imagem de perfil.');
+    throw new Error('Usuário não autenticado. Faça login para enviar a imagem para análise.');
   }
 
   const response = await fetch(PROFILE_API_URL, {
@@ -38,9 +38,9 @@ export async function uploadProfileImage(file: File): Promise<UploadProfileRespo
 }
 
 /**
- * Lê a imagem de perfil enviada através do método GET na rota /profile.
+ * Lê a imagem enviada através do método GET na rota /profile.
  * Retorna uma URL de objeto (blob URL) pronta para ser atribuída ao src de uma tag <img>,
- * ou null se o usuário ainda não tiver imagem salva.
+ * ou null se o usuário ainda não tiver imagem enviada.
  */
 export async function fetchProfileImage(): Promise<string | null> {
   const token = getCognitoIdToken() || getCognitoAccessToken();
