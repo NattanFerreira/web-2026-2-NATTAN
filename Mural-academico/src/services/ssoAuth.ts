@@ -1,5 +1,9 @@
-const domain = import.meta.env.VITE_COGNITO_DOMAIN as string;
-const clientId = import.meta.env.VITE_COGNITO_CLIENT_ID as string;
+const domain =
+  (import.meta.env.VITE_COGNITO_DOMAIN as string) ||
+  'https://mural-ufersa.auth.us-east-1.amazoncognito.com';
+const clientId =
+  (import.meta.env.VITE_COGNITO_CLIENT_ID as string) ||
+  '4a6huno6el4punv9a1ud3plkbu';
 const redirectUri = `${window.location.origin}/auth/callback`;
 
 const b64url = (buf: ArrayBuffer) =>
@@ -65,32 +69,63 @@ export async function finishLogin(): Promise<string> {
   return data.id_token as string;
 }
 
+/** Lê os claims do id_token. Não valida a assinatura: o token veio direto
+ *  do endpoint do Cognito, por HTTPS, na troca do code com PKCE. */
+export function decodeJwt(token: string): Record<string, unknown> {
+  try {
+    const b64 = token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/');
+    const bytes = Uint8Array.from(atob(b64), (c) => c.charCodeAt(0));
+    return JSON.parse(new TextDecoder().decode(bytes));
+  } catch {
+    return {};
+  }
+}
+
+/** Verifica se um token JWT expirou. */
+export function isJwtExpired(token: string): boolean {
+  try {
+    const claims = decodeJwt(token);
+    if (!claims || typeof claims.exp !== 'number') return false;
+    // Margem de segurança de 30 segundos
+    return claims.exp * 1000 < Date.now() + 30_000;
+  } catch {
+    return true;
+  }
+}
+
 /** Retorna o token JWT do Cognito (access_token ou id_token) da sessão atual. */
 export function getCognitoAccessToken(): string | null {
-  return (
+  const token =
     sessionStorage.getItem('access_token') ||
     sessionStorage.getItem('id_token') ||
     localStorage.getItem('cognito_access_token') ||
-    localStorage.getItem('cognito_id_token')
-  );
+    localStorage.getItem('cognito_id_token');
+
+  if (!token) return null;
+  if (isJwtExpired(token)) {
+    return null;
+  }
+  return token;
 }
 
 /** Retorna especificamente o ID Token JWT do Cognito (usado pelo Cognito Authorizer no API Gateway). */
 export function getCognitoIdToken(): string | null {
-  return (
+  const token =
     sessionStorage.getItem('id_token') ||
     localStorage.getItem('cognito_id_token') ||
     sessionStorage.getItem('access_token') ||
-    localStorage.getItem('cognito_access_token')
-  );
+    localStorage.getItem('cognito_access_token');
+
+  if (!token) return null;
+  if (isJwtExpired(token)) {
+    return null;
+  }
+  return token;
 }
 
-/** Lê os claims do id_token. Não valida a assinatura: o token veio direto
- *  do endpoint do Cognito, por HTTPS, na troca do code com PKCE. */
-export function decodeJwt(token: string): Record<string, unknown> {
-  const b64 = token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/');
-  const bytes = Uint8Array.from(atob(b64), (c) => c.charCodeAt(0));
-  return JSON.parse(new TextDecoder().decode(bytes));
+/** Verifica se o usuário possui sessão ativa e válida no Cognito. */
+export function hasValidCognitoSession(): boolean {
+  return getCognitoIdToken() !== null;
 }
 
 /** Encerra também a sessão no Cognito. */

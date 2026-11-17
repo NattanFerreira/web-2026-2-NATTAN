@@ -3,9 +3,9 @@ import type { Usuario } from '../types';
 import {
   getUserProfile,
   updateUserProfile,
-  fileToDataUrl,
   type UserProfileData,
 } from '../services/profileService';
+import { compressImage } from '../utils/imageCompressor';
 import { getCognitoIdToken, getCognitoAccessToken, startGoogleLogin } from '../services/ssoAuth';
 import { storageService } from '../services/storageService';
 import {
@@ -117,13 +117,15 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
-    setSelectedFile(file);
     try {
-      const dataUrl = await fileToDataUrl(file);
-      setFotoPreview(dataUrl);
+      // Comprime a imagem imediatamente para formato otimizado (< 150 KB)
+      const compressed = await compressImage(file, 800, 800, 0.85);
+      setSelectedFile(compressed.file);
+      setFotoPreview(compressed.dataUrl);
       setFeedback(null);
     } catch (err) {
-      console.error(err);
+      console.error('Falha ao processar imagem:', err);
+      setSelectedFile(file);
     }
   };
 
@@ -227,16 +229,24 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({
       {!token && (
         <div className="mb-6 bg-amber-50 border border-amber-300 rounded-xl p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
           <div className="text-xs text-amber-900">
-            <strong>Atenção:</strong> Você entrou com sessão local. Para autenticar na rota{' '}
-            <code className="font-mono bg-amber-100 px-1 rounded">PUT /profile</code> do API Gateway
-            com token JWT do Cognito, entre com sua conta Google.
+            {localStorage.getItem('cognito_id_token') ? (
+              <>
+                <strong>Sessão do Cognito expirada:</strong> Sua autenticação institucional expirou (validade de 1 hora).
+                Renove o login com Google para salvar suas alterações no S3 e DynamoDB via <code className="font-mono bg-amber-100 px-1 rounded">PUT /profile</code>.
+              </>
+            ) : (
+              <>
+                <strong>Atenção:</strong> Você está utilizando uma sessão local ou anônima. Para salvar e persistir os dados no S3 e DynamoDB via{' '}
+                <code className="font-mono bg-amber-100 px-1 rounded">PUT /profile</code>, autentique-se com sua conta Google institucional.
+              </>
+            )}
           </div>
           <button
             type="button"
             onClick={() => startGoogleLogin()}
-            className="bg-[#1F3B32] text-[#FAF7F0] px-3.5 py-2 rounded-lg text-xs font-semibold shrink-0 cursor-pointer"
+            className="bg-[#1F3B32] hover:bg-[#274A3F] text-[#FAF7F0] px-3.5 py-2 rounded-lg text-xs font-semibold shrink-0 cursor-pointer shadow-sm transition"
           >
-            Autenticar com Google (Cognito)
+            {localStorage.getItem('cognito_id_token') ? 'Renovar Login com Google' : 'Autenticar com Google (Cognito)'}
           </button>
         </div>
       )}
