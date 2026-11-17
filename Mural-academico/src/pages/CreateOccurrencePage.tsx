@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import type { CategoriaOcorrencia, Usuario } from '../types';
 import { validation } from '../utils/validation';
 import { PinIcon } from '../components/PinIcon';
+import { IconLock, IconCamera } from '../components/Icons';
 
 interface CreateOccurrencePageProps {
   currentUser: Usuario | null;
@@ -56,7 +57,9 @@ export const CreateOccurrencePage: React.FC<CreateOccurrencePageProps> = ({
     return (
       <div className="max-w-md mx-auto py-12 px-4 text-center">
         <div className="bg-[#FAF7F0] border border-[#22201B]/15 rounded-xl p-8 shadow-sm">
-          <span className="text-4xl mb-3 block">🔐</span>
+          <div className="flex justify-center mb-3 text-[#1F3B32]">
+            <IconLock size={32} />
+          </div>
           <h2 className="font-display text-2xl font-bold text-[#1F3B32]">Identificação Necessária</h2>
           <p className="text-xs text-[#5A554A] mt-2 mb-6">
             Para registrar uma ocorrência acadêmica ou de infraestrutura, é necessário estar autenticado
@@ -304,7 +307,9 @@ export const CreateOccurrencePage: React.FC<CreateOccurrencePageProps> = ({
                 </div>
               ) : (
                 <>
-                  <span className="text-2xl block mb-1">📷</span>
+                  <div className="flex justify-center mb-1.5 text-[#1F3B32]">
+                    <IconCamera size={22} />
+                  </div>
                   <p className="text-xs text-[#5A554A]">
                     Clique para anexar uma foto do local ou equipamento
                   </p>

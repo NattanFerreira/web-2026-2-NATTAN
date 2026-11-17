@@ -1,5 +1,6 @@
 import React from 'react';
 import type { Ocorrencia, StatusOcorrencia, Usuario } from '../types';
+import { IconWrench, IconClose } from './Icons';
 
 interface OccurrenceDetailModalProps {
   ocorrencia: Ocorrencia | null;
@@ -69,7 +70,7 @@ export const OccurrenceDetailModal: React.FC<OccurrenceDetailModalProps> = ({
             onClick={onClose}
             className="text-[#FAF7F0]/80 hover:text-[#FAF7F0] text-lg font-bold p-1 leading-none cursor-pointer"
           >
-            ✕
+            <IconClose size={16} />
           </button>
         </div>
 
@@ -129,7 +130,8 @@ export const OccurrenceDetailModal: React.FC<OccurrenceDetailModalProps> = ({
           {ocorrencia.parecer_atendimento && (
             <div className="bg-[#1F3B32]/10 border border-[#1F3B32]/30 rounded-lg p-3.5 text-xs">
               <span className="font-bold text-[#1F3B32] uppercase font-mono text-[11px] flex items-center gap-1.5 mb-1">
-                <span>🔧</span> Parecer Técnico / Resposta da Administração:
+                <IconWrench size={13} />
+                <span>Parecer Técnico / Resposta da Administração:</span>
               </span>
               <p className="text-[#22201B] leading-relaxed italic">
                 "{ocorrencia.parecer_atendimento}"

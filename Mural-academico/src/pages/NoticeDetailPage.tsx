@@ -1,6 +1,13 @@
 import React from 'react';
 import type { Aviso, Comentario, Usuario } from '../types';
 import { CommentsSection } from '../components/CommentsSection';
+import {
+  IconClipboard,
+  IconEdit,
+  IconTrash,
+  IconPaperclip,
+  IconAlert,
+} from '../components/Icons';
 
 interface NoticeDetailPageProps {
   aviso: Aviso | undefined;
@@ -31,7 +38,9 @@ export const NoticeDetailPage: React.FC<NoticeDetailPageProps> = ({
     return (
       <div className="max-w-3xl mx-auto py-12 px-4 text-center">
         <div className="bg-[#FAF7F0] border border-[#22201B]/15 rounded-xl p-8 shadow-sm">
-          <span className="text-4xl mb-3 block">📋</span>
+          <div className="flex justify-center mb-3 text-[#1F3B32]">
+            <IconClipboard size={32} />
+          </div>
           <h2 className="font-display text-2xl font-bold text-[#1F3B32]">Aviso não encontrado</h2>
           <p className="text-xs text-[#5A554A] mt-2 mb-6">
             O comunicado solicitado pode ter sido arquivado ou o link está incorreto.
@@ -72,9 +81,10 @@ export const NoticeDetailPage: React.FC<NoticeDetailPageProps> = ({
           {isAdmin && onEditAviso && (
             <button
               onClick={() => onEditAviso(aviso.id_aviso)}
-              className="text-xs font-semibold text-[#1F3B32] hover:bg-[#1F3B32]/10 px-3 py-1 rounded transition border border-[#1F3B32]/30 cursor-pointer flex items-center gap-1"
+              className="text-xs font-semibold text-[#1F3B32] hover:bg-[#1F3B32]/10 px-3 py-1 rounded transition border border-[#1F3B32]/30 cursor-pointer flex items-center gap-1.5"
             >
-              <span>✏️</span> Editar
+              <IconEdit size={13} />
+              <span>Editar</span>
             </button>
           )}
 
@@ -86,9 +96,10 @@ export const NoticeDetailPage: React.FC<NoticeDetailPageProps> = ({
                   onBack();
                 }
               }}
-              className="text-xs font-semibold text-[#C1443A] hover:bg-[#C1443A]/10 px-3 py-1 rounded transition border border-[#C1443A]/30 cursor-pointer flex items-center gap-1"
+              className="text-xs font-semibold text-[#C1443A] hover:bg-[#C1443A]/10 px-3 py-1 rounded transition border border-[#C1443A]/30 cursor-pointer flex items-center gap-1.5"
             >
-              <span>🗑️</span> Excluir
+              <IconTrash size={13} />
+              <span>Excluir</span>
             </button>
           )}
         </div>
@@ -128,7 +139,7 @@ export const NoticeDetailPage: React.FC<NoticeDetailPageProps> = ({
           {aviso.nome_anexo && (
             <div className="bg-[#EDE1CB]/60 border border-[#1F3B32]/30 rounded-lg p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
               <div className="flex items-center gap-3">
-                <span className="text-2xl">📎</span>
+                <IconPaperclip size={20} className="text-[#1F3B32] shrink-0" />
                 <div>
                   <span className="text-xs font-semibold text-[#1F3B32] block">
                     {aviso.nome_anexo}
@@ -191,7 +202,8 @@ export const NoticeDetailPage: React.FC<NoticeDetailPageProps> = ({
 
           <div className="bg-[#FAF7F0] border border-[#22201B]/15 rounded-xl p-5 shadow-sm">
             <h3 className="text-xs font-bold text-[#C1443A] uppercase tracking-wider mb-2 flex items-center gap-1.5">
-              <span>⚠️</span> Encontrou algum problema?
+              <IconAlert size={14} />
+              <span>Encontrou algum problema?</span>
             </h3>
             <p className="text-xs text-[#5A554A] leading-relaxed mb-4">
               Se você identificou algum problema no local ({aviso.local_bloco}) ou divergência nas

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { PinIcon } from '../components/PinIcon';
+import { IconAlert, IconEye } from '../components/Icons';
 import { startGoogleLogin } from '../services/ssoAuth';
 import { authService } from '../services/authService';
 import type { Usuario } from '../types';
@@ -83,7 +84,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onAuthenticated, onGuest }
           </div>
           <div className="mb-2">
             <span className="inline-block text-[10.5px] font-semibold text-[#1F3B32] bg-[#1F3B32]/10 px-2.5 py-0.5 rounded-full">
-              Mural do Campus · De alunos para alunos 🎓
+              Mural do Campus · De alunos para alunos
             </span>
           </div>
           <h1 className="font-display text-2xl font-bold text-[#22201B]">
@@ -120,7 +121,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onAuthenticated, onGuest }
             role="alert"
             className="mb-4 p-3 bg-[#C1443A]/10 border border-[#C1443A]/40 text-[#C1443A] rounded-lg text-xs font-semibold flex items-center gap-2"
           >
-            <span>⚠️</span>
+            <IconAlert size={15} className="shrink-0" />
             <span>{serverError}</span>
           </div>
         )}
@@ -223,9 +224,10 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onAuthenticated, onGuest }
           id="login-visitante"
           type="button"
           onClick={onGuest}
-          className="w-full mt-3 text-xs font-semibold text-[#1F3B32] border border-dashed border-[#1F3B32]/50 hover:bg-[#1F3B32]/5 py-2.5 rounded-lg transition cursor-pointer"
+          className="w-full mt-3 text-xs font-semibold text-[#1F3B32] border border-dashed border-[#1F3B32]/50 hover:bg-[#1F3B32]/5 py-2.5 rounded-lg transition cursor-pointer flex items-center justify-center gap-2"
         >
-          👁️ Continuar como visitante
+          <IconEye size={15} />
+          <span>Continuar como visitante</span>
         </button>
         <p className="text-[11px] text-[#5A554A] text-center mt-2">
           Visitantes apenas leem os murais e os comentários.

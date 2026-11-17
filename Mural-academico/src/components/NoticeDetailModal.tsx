@@ -1,5 +1,6 @@
 import React from 'react';
 import type { Aviso } from '../types';
+import { IconPaperclip, IconClose } from './Icons';
 
 interface NoticeDetailModalProps {
   aviso: Aviso | null;
@@ -66,7 +67,7 @@ export const NoticeDetailModal: React.FC<NoticeDetailModalProps> = ({
             onClick={onClose}
             className="text-[#FAF7F0]/80 hover:text-[#FAF7F0] text-lg font-bold p-1 leading-none cursor-pointer"
           >
-            ✕
+            <IconClose size={16} />
           </button>
         </div>
 
@@ -97,7 +98,7 @@ export const NoticeDetailModal: React.FC<NoticeDetailModalProps> = ({
               {aviso.nome_anexo && (
                 <div className="mt-4 p-4 bg-[#E3D4B4]/50 border border-dashed border-[#1F3B32]/40 rounded-lg flex items-center justify-between gap-4">
                   <div className="flex items-center gap-2.5 text-xs text-[#1F3B32] font-medium truncate">
-                    <span className="text-base">📎</span>
+                    <IconPaperclip size={15} className="shrink-0" />
                     <span className="font-mono truncate">{aviso.nome_anexo}</span>
                     {aviso.tamanho_anexo && (
                       <span className="text-[#5A554A] text-[11px]">({aviso.tamanho_anexo})</span>

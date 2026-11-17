@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import type { Usuario } from '../types';
 import { getCognitoAccessToken, getCognitoIdToken, startGoogleLogin } from '../services/ssoAuth';
 import { uploadProfileImage, fetchProfileImage } from '../services/profileService';
+import { IconSparkles, IconCamera, IconSpinner, IconClose } from './Icons';
 
 interface ChatMessage {
   id: string;
@@ -93,7 +94,7 @@ export const GeminiChatWidget: React.FC<GeminiChatWidgetProps> = ({ currentUser 
             {
               id: `gemini-reply-${Date.now()}`,
               sender: 'gemini',
-              text: `✅ Sua imagem foi recebida e gravada com sucesso no Amazon S3 (chave: ${res.key})! O método GET também validou a leitura da imagem para processamento da IA.`,
+              text: `Sua imagem foi recebida e gravada com sucesso no Amazon S3 (chave: ${res.key}). O método GET também validou a leitura da imagem para processamento da IA.`,
               timestamp: new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }),
             },
           ]);
@@ -267,7 +268,7 @@ export const GeminiChatWidget: React.FC<GeminiChatWidgetProps> = ({ currentUser 
           <div className="bg-[#1F3B32] text-[#FAF7F0] px-4 py-3 flex items-center justify-between gap-2">
             <div className="min-w-0">
               <div className="flex items-center gap-2">
-                <span className="text-base">✨</span>
+                <IconSparkles size={15} className="text-[#FAF7F0] shrink-0" />
                 <h3 className="font-display font-bold text-sm tracking-tight truncate">
                   Assistente Gemini · UFERSA
                 </h3>
@@ -290,7 +291,7 @@ export const GeminiChatWidget: React.FC<GeminiChatWidgetProps> = ({ currentUser 
                 title="Reconectar ao WebSocket (útil após abrir a aba Network/WS do DevTools)"
                 className="text-[10.5px] font-mono bg-[#274A3F] hover:bg-[#325d4f] text-[#FAF7F0] px-2 py-1 rounded border border-[#FAF7F0]/20 cursor-pointer transition"
               >
-                ↻ Reconectar
+                Reconectar
               </button>
               <button
                 type="button"
@@ -298,7 +299,7 @@ export const GeminiChatWidget: React.FC<GeminiChatWidgetProps> = ({ currentUser 
                 title="Minimizar chat"
                 className="text-[#FAF7F0]/75 hover:text-[#FAF7F0] px-1.5 py-0.5 text-sm font-bold cursor-pointer"
               >
-                ✕
+                <IconClose size={15} />
               </button>
             </div>
           </div>
@@ -341,7 +342,7 @@ export const GeminiChatWidget: React.FC<GeminiChatWidgetProps> = ({ currentUser 
                 >
                   {msg.sender === 'gemini' && (
                     <div className="text-[10px] font-bold font-mono text-[#1F3B32] mb-0.5">
-                      🤖 Google Gemini (via AWS Lambda)
+                      Google Gemini (via AWS Lambda)
                     </div>
                   )}
                   {msg.imageUrl && (
@@ -390,9 +391,9 @@ export const GeminiChatWidget: React.FC<GeminiChatWidgetProps> = ({ currentUser 
               onClick={() => fileInputRef.current?.click()}
               disabled={isUploading}
               title="Anexar imagem para análise da IA (POST /profile no API Gateway)"
-              className="bg-[#EDE1CB] hover:bg-[#dfd1b8] text-[#1F3B32] p-2 rounded-lg text-xs font-semibold cursor-pointer shrink-0 disabled:opacity-50"
+              className="bg-[#EDE1CB] hover:bg-[#dfd1b8] text-[#1F3B32] p-2 rounded-lg text-xs font-semibold cursor-pointer shrink-0 disabled:opacity-50 flex items-center justify-center"
             >
-              {isUploading ? '⏳' : '📷'}
+              {isUploading ? <IconSpinner size={15} /> : <IconCamera size={15} />}
             </button>
             <input
               type="text"
@@ -416,7 +417,7 @@ export const GeminiChatWidget: React.FC<GeminiChatWidgetProps> = ({ currentUser 
           onClick={() => setIsOpen(true)}
           className="bg-[#1F3B32] hover:bg-[#274A3F] text-[#FAF7F0] border-2 border-[#FAF7F0]/20 px-4 py-2.5 rounded-full shadow-xl flex items-center gap-2 text-xs font-semibold cursor-pointer transition"
         >
-          <span>✨</span>
+          <IconSparkles size={14} />
           <span>Chat IA (Gemini)</span>
           <span className={`w-2 h-2 rounded-full ${statusBadge.dot}`} />
         </button>

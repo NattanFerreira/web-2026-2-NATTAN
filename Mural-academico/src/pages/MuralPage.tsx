@@ -1,6 +1,8 @@
 import React, { useState, useMemo } from 'react';
 import type { Aviso, CategoriaAviso, Usuario } from '../types';
 import { NoticeCard } from '../components/NoticeCard';
+import { PinIcon } from '../components/PinIcon';
+import { IconEye, IconClose } from '../components/Icons';
 
 interface MuralPageProps {
   avisos: Aviso[];
@@ -60,7 +62,7 @@ export const MuralPage: React.FC<MuralPageProps> = ({
               Mural do Campus
             </h2>
             <span className="text-[10px] font-semibold bg-[#1F3B32]/10 text-[#1F3B32] px-2 py-0.5 rounded-full hidden sm:inline-block">
-              De alunos para alunos 🎓
+              De alunos para alunos
             </span>
           </div>
           <p className="text-xs sm:text-sm text-[#5A554A] mt-1 font-sans">
@@ -74,7 +76,7 @@ export const MuralPage: React.FC<MuralPageProps> = ({
             type="text"
             value={busca}
             onChange={(e) => setBusca(e.target.value)}
-            placeholder="🔍 Buscar por avisos, salas, blocos ou eventos…"
+            placeholder="Buscar por avisos, salas, blocos ou eventos…"
             className="w-full bg-[#FAF7F0] border-1.5 border-[#1F3B32] rounded-xl px-4 py-2.5 text-xs text-[#22201B] placeholder-[#5A554A]/70 shadow-xs focus:outline-none focus:ring-2 focus:ring-[#1F3B32]/30"
           />
           {busca && (
@@ -82,7 +84,7 @@ export const MuralPage: React.FC<MuralPageProps> = ({
               onClick={() => setBusca('')}
               className="absolute right-3 top-2.5 text-xs text-[#5A554A] hover:text-[#22201B] cursor-pointer"
             >
-              ✕
+              <IconClose size={14} />
             </button>
           )}
         </div>
@@ -124,8 +126,9 @@ export const MuralPage: React.FC<MuralPageProps> = ({
             <span>+</span> Registrar ocorrência
           </button>
         ) : (
-          <span className="text-[11px] text-[#5A554A] font-mono bg-[#FAF7F0]/70 px-3 py-1.5 rounded-lg border border-[#22201B]/10">
-            👁️ Modo visitante · somente leitura
+          <span className="text-[11px] text-[#5A554A] font-mono bg-[#FAF7F0]/70 px-3 py-1.5 rounded-lg border border-[#22201B]/10 flex items-center gap-1.5">
+            <IconEye size={14} />
+            <span>Modo visitante · somente leitura</span>
           </span>
         )}
       </div>
@@ -146,7 +149,9 @@ export const MuralPage: React.FC<MuralPageProps> = ({
         </div>
       ) : (
         <div className="bg-[#FAF7F0]/80 border border-[#22201B]/15 rounded-xl p-12 text-center max-w-md mx-auto my-12">
-          <div className="text-3xl mb-2">📌</div>
+          <div className="flex justify-center mb-3">
+            <PinIcon size={28} variant="dark" />
+          </div>
           <h3 className="font-display text-lg font-bold text-[#1F3B32] mb-1">
             Nenhum aviso encontrado
           </h3>

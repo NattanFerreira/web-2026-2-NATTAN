@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import type { CategoriaAviso, Usuario } from '../types';
+import { IconPaperclip, IconClose } from './Icons';
 
 import { validation } from '../utils/validation';
 
@@ -102,7 +103,7 @@ export const CreateNoticeModal: React.FC<CreateNoticeModalProps> = ({
             onClick={onClose}
             className="text-[#FAF7F0]/80 hover:text-[#FAF7F0] text-lg font-bold p-1 leading-none cursor-pointer"
           >
-            ✕
+            <IconClose size={16} />
           </button>
         </div>
 
@@ -214,7 +215,7 @@ export const CreateNoticeModal: React.FC<CreateNoticeModalProps> = ({
               Anexo em PDF (Armazenado no bucket S3)
             </label>
             <label className="border-2 border-dashed border-[#1F3B32]/30 hover:border-[#1F3B32] bg-[#E3D4B4]/40 hover:bg-[#E3D4B4]/60 rounded-lg p-4 text-center cursor-pointer transition flex flex-col items-center justify-center">
-              <span className="text-xl mb-1">📎</span>
+              <IconPaperclip size={20} className="text-[#1F3B32] mb-1.5" />
               <span className="text-xs font-medium text-[#1F3B32]">
                 {anexoNome ? (
                   <span className="font-mono font-bold text-[#1F3B32]">{anexoNome} ({anexoTamanho})</span>

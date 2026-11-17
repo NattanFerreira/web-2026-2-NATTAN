@@ -18,6 +18,8 @@ import { ProfilePage } from './pages/ProfilePage';
 import { getUserProfile } from './services/profileService';
 import { OccurrenceDetailModal } from './components/OccurrenceDetailModal';
 import { GeminiChatWidget } from './components/GeminiChatWidget';
+import { PinIcon } from './components/PinIcon';
+import { IconClose } from './components/Icons';
 import { LINKS_UTEIS, ENDERECO_CAMPUS } from './data/links';
 
 export function App() {
@@ -293,13 +295,13 @@ export function App() {
       {/* Notificação Toast Flutuante */}
       {toastMessage && (
         <div className="fixed bottom-5 right-5 z-50 bg-[#1F3B32] text-[#FAF7F0] border border-[#274A3F] px-4 py-2.5 rounded-lg shadow-xl text-xs font-semibold flex items-center gap-2.5 animate-in slide-in-from-bottom-2">
-          <span className="text-[#C1443A] text-base">📌</span>
+          <PinIcon size={16} variant="light" />
           <span>{toastMessage}</span>
           <button
             onClick={() => setToastMessage(null)}
             className="ml-2 text-[#FAF7F0]/60 hover:text-[#FAF7F0] cursor-pointer"
           >
-            ✕
+            <IconClose size={14} />
           </button>
         </div>
       )}
@@ -457,7 +459,7 @@ export function App() {
               <div className="flex items-center gap-2 mb-2">
                 <span className="font-display font-bold text-lg text-[#FAF7F0]">Quadro</span>
                 <span className="text-[10px] font-semibold bg-[#274A3F] text-[#FAF7F0]/90 px-2 py-0.5 rounded">
-                  De alunos para alunos 🎓
+                  De alunos para alunos
                 </span>
               </div>
               <p className="text-[#FAF7F0]/70 text-[11.5px] leading-relaxed mb-3">
@@ -486,7 +488,9 @@ export function App() {
                       className="text-[#FAF7F0]/75 hover:text-white transition flex items-center justify-between text-xs group"
                     >
                       <span className="flex items-center gap-2">
-                        <span>{link.icon}</span>
+                        <span className="text-[9.5px] font-mono font-bold bg-[#274A3F] px-1.5 py-0.5 rounded">
+                          {link.icon}
+                        </span>
                         <span>{link.label}</span>
                       </span>
                       {link.download ? (
@@ -519,7 +523,9 @@ export function App() {
                       className="text-[#FAF7F0]/75 hover:text-white transition flex items-center justify-between text-xs group"
                     >
                       <span className="flex items-center gap-2">
-                        <span>{link.icon}</span>
+                        <span className="text-[9.5px] font-mono font-bold bg-[#274A3F] px-1.5 py-0.5 rounded">
+                          {link.icon}
+                        </span>
                         <span>{link.label}</span>
                       </span>
                       <span className="text-[10px] opacity-0 group-hover:opacity-100 transition-opacity">

@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import type { Ocorrencia, StatusOcorrencia, Usuario } from '../types';
+import { IconLock, IconClose } from '../components/Icons';
 
 interface AdminDashboardPageProps {
   ocorrencias: Ocorrencia[];
@@ -48,7 +49,9 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
     return (
       <div className="max-w-md mx-auto py-12 px-4 text-center">
         <div className="bg-[#FAF7F0] border border-[#C1443A]/30 rounded-xl p-8 shadow-sm">
-          <span className="text-4xl mb-3 block">🔒</span>
+          <div className="flex justify-center mb-3 text-[#C1443A]">
+            <IconLock size={32} />
+          </div>
           <h2 className="font-display text-2xl font-bold text-[#1F3B32]">Painel Restrito</h2>
           <p className="text-xs text-[#5A554A] mt-2 mb-6">
             Apenas usuários com perfil de <strong>Administrador</strong> autenticados possuem acesso ao gerenciamento de ocorrências do campus.
@@ -116,7 +119,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
             type="text"
             value={busca}
             onChange={(e) => setBusca(e.target.value)}
-            placeholder="🔍 Filtrar por sala, aluno ou título..."
+            placeholder="Filtrar por sala, aluno ou título..."
             className="w-full bg-[#FAF7F0] border border-[#1F3B32]/40 rounded-lg px-3.5 py-2 text-xs text-[#22201B] placeholder-[#5A554A]/70 shadow-xs focus:outline-none focus:border-[#1F3B32]"
           />
         </div>
@@ -213,7 +216,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                       </button>
                       {oco.parecer_atendimento && (
                         <span className="text-[10.5px] text-[#35577A] italic font-normal block mt-0.5 line-clamp-1">
-                          🔧 Parecer: {oco.parecer_atendimento}
+                          Parecer: {oco.parecer_atendimento}
                         </span>
                       )}
                     </td>
@@ -252,10 +255,10 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                             onDeleteOcorrencia(oco.id_ocorrencia);
                           }
                         }}
-                        className="text-[#C1443A] hover:bg-[#C1443A]/10 p-1 rounded font-semibold text-[11px] cursor-pointer"
+                        className="text-[#C1443A] hover:bg-[#C1443A]/10 p-1 rounded font-semibold text-[11px] cursor-pointer inline-flex items-center"
                         title="Excluir ocorrência"
                       >
-                        ✕
+                        <IconClose size={13} />
                       </button>
                     </td>
                   </tr>

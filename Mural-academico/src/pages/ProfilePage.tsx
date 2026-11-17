@@ -8,6 +8,14 @@ import {
 } from '../services/profileService';
 import { getCognitoIdToken, getCognitoAccessToken, startGoogleLogin } from '../services/ssoAuth';
 import { storageService } from '../services/storageService';
+import {
+  IconCamera,
+  IconCheck,
+  IconAlert,
+  IconCloud,
+  IconSave,
+  IconSpinner,
+} from '../components/Icons';
 
 interface ProfilePageProps {
   currentUser: Usuario | null;
@@ -241,7 +249,9 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({
               : 'bg-red-50 border-red-300 text-red-900'
           }`}
         >
-          <span className="text-base">{feedback.type === 'success' ? '✅' : '⚠️'}</span>
+          <span className="mt-0.5 shrink-0">
+            {feedback.type === 'success' ? <IconCheck size={16} /> : <IconAlert size={16} />}
+          </span>
           <div className="flex-1">{feedback.text}</div>
         </div>
       )}
@@ -281,7 +291,7 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({
               onClick={() => fileInputRef.current?.click()}
               className="w-full bg-[#1F3B32] hover:bg-[#274A3F] text-[#FAF7F0] text-xs font-semibold py-2.5 px-4 rounded-lg shadow transition cursor-pointer flex items-center justify-center gap-2"
             >
-              <span>📷</span>
+              <IconCamera size={15} />
               <span>Escolher Nova Foto de Perfil</span>
             </button>
 
@@ -300,8 +310,9 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({
           {/* Card de Diagnóstico AWS (ótimo para comprovação na avaliação) */}
           <div className="bg-[#1F3B32] text-[#FAF7F0] rounded-2xl p-4 shadow-md text-xs space-y-2.5 font-mono">
             <div className="flex items-center justify-between border-b border-[#FAF7F0]/15 pb-2">
-              <span className="font-bold text-[11px] uppercase tracking-wider text-emerald-300">
-                ☁️ Recursos AWS Vinculados
+              <span className="font-bold text-[11px] uppercase tracking-wider text-emerald-300 flex items-center gap-1.5">
+                <IconCloud size={14} />
+                <span>Recursos AWS Vinculados</span>
               </span>
               {isLoading && <span className="text-[10px] text-amber-300">Sincronizando...</span>}
             </div>
@@ -473,9 +484,19 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({
               <button
                 type="submit"
                 disabled={isSaving}
-                className="w-full sm:w-auto bg-[#C1443A] hover:bg-[#a93a31] disabled:opacity-50 text-[#FAF7F0] text-xs font-semibold px-5 py-2.5 rounded-lg shadow transition cursor-pointer"
+                className="w-full sm:w-auto bg-[#C1443A] hover:bg-[#a93a31] disabled:opacity-50 text-[#FAF7F0] text-xs font-semibold px-5 py-2.5 rounded-lg shadow transition cursor-pointer flex items-center justify-center gap-2"
               >
-                {isSaving ? '⏳ Salvando no S3 e DynamoDB...' : '💾 Salvar Alterações de Perfil'}
+                {isSaving ? (
+                  <>
+                    <IconSpinner size={15} />
+                    <span>Salvando no S3 e DynamoDB...</span>
+                  </>
+                ) : (
+                  <>
+                    <IconSave size={15} />
+                    <span>Salvar Alterações de Perfil</span>
+                  </>
+                )}
               </button>
             </div>
           </form>

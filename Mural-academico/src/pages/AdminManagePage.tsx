@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import type { Aviso, Comentario, Usuario } from '../types';
 import { ADMIN_EMAILS, isAdminEmail } from '../services/storageService';
+import { IconLock } from '../components/Icons';
 
 interface AdminManagePageProps {
   currentUser: Usuario | null;
@@ -52,7 +53,9 @@ export const AdminManagePage: React.FC<AdminManagePageProps> = ({
     return (
       <div className="max-w-md mx-auto py-12 px-4 text-center">
         <div className="bg-[#FAF7F0] border border-[#C1443A]/30 rounded-xl p-8 shadow-sm">
-          <span className="text-4xl mb-3 block">🔒</span>
+          <div className="flex justify-center mb-3 text-[#C1443A]">
+            <IconLock size={32} />
+          </div>
           <h2 className="font-display text-2xl font-bold text-[#1F3B32]">Acesso Restrito</h2>
           <p className="text-xs text-[#5A554A] mt-2 mb-6">
             Apenas administradores autenticados podem acessar a gestão do sistema.
@@ -152,7 +155,7 @@ export const AdminManagePage: React.FC<AdminManagePageProps> = ({
           type="text"
           value={busca}
           onChange={(e) => setBusca(e.target.value)}
-          placeholder="🔍 Buscar…"
+          placeholder="Buscar…"
           className="w-full sm:w-64 bg-[#FAF7F0] border border-[#1F3B32]/40 rounded-lg px-3.5 py-2 text-xs focus:outline-none focus:border-[#1F3B32]"
         />
       </div>

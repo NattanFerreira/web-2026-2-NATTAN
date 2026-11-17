@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import type { TabNavegacao, Usuario } from '../types';
 import { PinIcon } from './PinIcon';
+import { IconUser, IconLogout, IconClose } from './Icons';
 import { LINKS_UTEIS } from '../data/links';
 
 interface NavbarProps {
@@ -206,7 +207,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                       onClick={() => setIsLinksOpen(false)}
                       className="px-4 py-2 hover:bg-[#EDE1CB]/60 flex items-start gap-2.5 transition text-left cursor-pointer group"
                     >
-                      <span className="text-base shrink-0 group-hover:scale-110 transition-transform">
+                      <span className="text-[10px] font-mono font-bold bg-[#1F3B32] text-[#FAF7F0] px-1.5 py-0.5 rounded shrink-0">
                         {link.icon}
                       </span>
                       <div className="min-w-0 flex-1">
@@ -309,9 +310,10 @@ export const Navbar: React.FC<NavbarProps> = ({
                         onNavigate('perfil');
                         setIsUserMenuOpen(false);
                       }}
-                      className="w-full text-left px-4 py-2 text-xs font-semibold text-[#1F3B32] hover:bg-[#EDE1CB]/60 flex items-center justify-between cursor-pointer"
+                      className="w-full text-left px-4 py-2 text-xs font-semibold text-[#1F3B32] hover:bg-[#EDE1CB]/60 flex items-center gap-2 cursor-pointer"
                     >
-                      <span>👤 Meu Perfil (S3 & DynamoDB)</span>
+                      <IconUser size={14} />
+                      <span>Meu Perfil (S3 & DynamoDB)</span>
                     </button>
                     {isAdmin && (
                       <button
@@ -380,7 +382,8 @@ export const Navbar: React.FC<NavbarProps> = ({
                       }}
                       className="w-full text-left px-4 py-2 text-xs font-semibold text-[#C1443A] hover:bg-[#C1443A]/10 flex items-center gap-2 cursor-pointer"
                     >
-                      <span>🚪</span> Sair da Conta
+                      <IconLogout size={14} />
+                      <span>Sair da Conta</span>
                     </button>
                   </div>
                 </div>
@@ -498,7 +501,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               onClick={() => setIsMobileLinksOpen(false)}
               className="text-xs text-[#5A554A] font-bold px-2 py-0.5"
             >
-              ✕
+              <IconClose size={14} />
             </button>
           </div>
           <div className="grid grid-cols-2 gap-2">
@@ -511,7 +514,9 @@ export const Navbar: React.FC<NavbarProps> = ({
                 download={link.download}
                 className="p-2.5 rounded-lg border border-[#22201B]/15 bg-white hover:bg-[#EDE1CB]/40 flex items-center gap-2 text-xs font-medium text-[#1F3B32]"
               >
-                <span>{link.icon}</span>
+                <span className="text-[10px] font-mono font-bold bg-[#1F3B32] text-[#FAF7F0] px-1.5 py-0.5 rounded shrink-0">
+                  {link.icon}
+                </span>
                 <span className="truncate">{link.label}</span>
               </a>
             ))}

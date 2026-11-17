@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import type { Aviso, CategoriaAviso, Usuario } from '../types';
 import { validation } from '../utils/validation';
 import { PinIcon } from '../components/PinIcon';
+import { IconLock, IconSpinner, IconPaperclip, IconSave } from '../components/Icons';
 
 interface EditNoticePageProps {
   avisoId: string;
@@ -62,7 +63,9 @@ export const EditNoticePage: React.FC<EditNoticePageProps> = ({
     return (
       <div className="max-w-md mx-auto py-12 px-4 text-center">
         <div className="bg-[#FAF7F0] border border-[#C1443A]/30 rounded-xl p-8 shadow-sm">
-          <span className="text-4xl mb-3 block">🔒</span>
+          <div className="flex justify-center mb-3 text-[#C1443A]">
+            <IconLock size={32} />
+          </div>
           <h2 className="font-display text-2xl font-bold text-[#1F3B32]">Acesso Restrito</h2>
           <p className="text-xs text-[#5A554A] mt-2 mb-6">
             Apenas administradores autenticados podem editar comunicados institucionais.
@@ -89,7 +92,9 @@ export const EditNoticePage: React.FC<EditNoticePageProps> = ({
   if (isLoading) {
     return (
       <div className="max-w-md mx-auto py-16 text-center text-[#5A554A]">
-        <div className="animate-spin text-3xl mb-3">⏳</div>
+        <div className="flex justify-center mb-3 text-[#1F3B32]">
+          <IconSpinner size={28} />
+        </div>
         <p className="text-xs">Carregando dados do comunicado...</p>
       </div>
     );
@@ -270,7 +275,7 @@ export const EditNoticePage: React.FC<EditNoticePageProps> = ({
           {anexoNome && (
             <div className="bg-[#EDE1CB]/60 border border-[#1F3B32]/20 rounded-lg p-3 flex items-center justify-between text-xs">
               <div className="flex items-center gap-2">
-                <span>📎</span>
+                <IconPaperclip size={14} className="text-[#1F3B32]" />
                 <span className="font-semibold text-[#1F3B32]">{anexoNome}</span>
                 {anexoTamanho && <span className="text-[#5A554A]">({anexoTamanho})</span>}
               </div>
@@ -302,7 +307,7 @@ export const EditNoticePage: React.FC<EditNoticePageProps> = ({
               disabled={isSubmitting}
               className="bg-[#1F3B32] hover:bg-[#274A3F] text-[#FAF7F0] text-xs font-semibold px-6 py-2.5 rounded-lg shadow-sm transition cursor-pointer flex items-center gap-1.5 disabled:opacity-50"
             >
-              <span>💾</span>
+              <IconSave size={14} />
               <span>{isSubmitting ? 'Salvando...' : 'Salvar Alterações'}</span>
             </button>
           </div>

@@ -1,5 +1,6 @@
 import React from 'react';
 import type { Aviso, Usuario } from '../types';
+import { IconPaperclip, IconClose } from './Icons';
 
 interface NoticeCardProps {
   aviso: Aviso;
@@ -56,7 +57,7 @@ export const NoticeCard: React.FC<NoticeCardProps> = ({
               className="text-[#C1443A] hover:bg-[#C1443A]/10 p-1 rounded transition text-xs font-semibold"
               title="Excluir aviso"
             >
-              ✕
+              <IconClose size={13} />
             </button>
           )}
         </div>
@@ -82,7 +83,8 @@ export const NoticeCard: React.FC<NoticeCardProps> = ({
 
         {aviso.nome_anexo && (
           <span className="flex items-center gap-1 font-semibold text-[#C1443A] shrink-0 bg-[#C1443A]/8 px-2 py-0.5 rounded text-[10.5px]">
-            <span>📎</span> PDF
+            <IconPaperclip size={12} />
+            <span>PDF</span>
           </span>
         )}
       </div>

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import type { CategoriaOcorrencia, Usuario } from '../types';
+import { IconCamera, IconClose } from './Icons';
 
 interface CreateOccurrenceModalProps {
   isOpen: boolean;
@@ -114,7 +115,7 @@ export const CreateOccurrenceModal: React.FC<CreateOccurrenceModalProps> = ({
             onClick={onClose}
             className="text-[#FAF7F0]/80 hover:text-[#FAF7F0] text-lg font-bold p-1 leading-none cursor-pointer"
           >
-            ✕
+            <IconClose size={16} />
           </button>
         </div>
 
@@ -252,7 +253,7 @@ export const CreateOccurrenceModal: React.FC<CreateOccurrenceModalProps> = ({
                 </div>
               ) : (
                 <>
-                  <span className="text-xl mb-1">📷</span>
+                  <IconCamera size={22} className="text-[#1F3B32] mb-1.5" />
                   <span className="text-xs font-medium text-[#1F3B32]">
                     Arraste uma imagem ou clique para anexar
                   </span>
