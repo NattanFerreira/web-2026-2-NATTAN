@@ -180,8 +180,13 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({
         foto_url: finalPhoto || undefined,
       };
 
-      storageService.updateUsuario(currentUser.id_usuario, updatedUser);
-      storageService.setCurrentUser(updatedUser);
+      try {
+        storageService.updateUsuario(currentUser.id_usuario, updatedUser);
+        storageService.setCurrentUser(updatedUser);
+      } catch (storageErr) {
+        console.warn('Cache local não pôde ser gravado, mas os dados foram salvos na AWS:', storageErr);
+      }
+
       onUserUpdated(updatedUser);
       setSelectedFile(null);
 

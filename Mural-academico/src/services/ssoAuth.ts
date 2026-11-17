@@ -64,8 +64,12 @@ export async function finishLogin(): Promise<string> {
   // Guarda os JWT da sessão para inspeção no DevTools e autenticação no WebSocket.
   sessionStorage.setItem('id_token', data.id_token as string);
   sessionStorage.setItem('access_token', data.access_token as string);
-  localStorage.setItem('cognito_id_token', data.id_token as string);
-  localStorage.setItem('cognito_access_token', data.access_token as string);
+  try {
+    localStorage.setItem('cognito_id_token', data.id_token as string);
+    localStorage.setItem('cognito_access_token', data.access_token as string);
+  } catch (err) {
+    console.warn('[ssoAuth] Falha ao persistir tokens no localStorage:', err);
+  }
   return data.id_token as string;
 }
 

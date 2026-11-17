@@ -26,6 +26,28 @@ const STORAGE_KEYS = {
   GUEST: 'quadro_visitante_v1',
 };
 
+/** Executa localStorage.setItem com tratamento defensivo contra estouro de cota (QuotaExceededError). */
+function safeSetItem(key: string, value: string): void {
+  try {
+    localStorage.setItem(key, value);
+  } catch (err) {
+    console.warn(
+      `[storageService] Não foi possível persistir "${key}" no localStorage (cota de 5 MB excedida ou restrição do navegador):`,
+      err
+    );
+  }
+}
+
+/** Remove imagens pesadas em Base64 para não estourar a cota de 5 MB do localStorage do navegador. */
+function sanitizeUserForStorage(user: Usuario): Usuario {
+  if (user.foto_url && user.foto_url.startsWith('data:image')) {
+    // Omite a string Base64 do localStorage; a imagem oficial reside no Amazon S3 / DynamoDB
+    const { foto_url: _, ...rest } = user;
+    return rest as Usuario;
+  }
+  return user;
+}
+
 export const storageService = {
   getUsuarios(): Usuario[] {
     try {
@@ -93,7 +115,7 @@ export const storageService = {
   },
 
   saveUsuariosRegistrados(users: Usuario[]): void {
-    localStorage.setItem(STORAGE_KEYS.REGISTERED_USERS, JSON.stringify(users));
+    safeSetItem(STORAGE_KEYS.REGISTERED_USERS, JSON.stringify(users.map(sanitizeUserForStorage)));
   },
 
   /** Garante que um e-mail de admin raiz sempre tenha perfil ADMINISTRADOR ao logar via Google. */
@@ -148,7 +170,7 @@ export const storageService = {
   },
 
   saveComentarios(comentarios: Comentario[]): void {
-    localStorage.setItem(STORAGE_KEYS.COMENTARIOS, JSON.stringify(comentarios));
+    safeSetItem(STORAGE_KEYS.COMENTARIOS, JSON.stringify(comentarios));
   },
 
   addComentario(data: {
@@ -218,7 +240,7 @@ export const storageService = {
     if (!user) {
       localStorage.removeItem(STORAGE_KEYS.CURRENT_USER);
     } else {
-      localStorage.setItem(STORAGE_KEYS.CURRENT_USER, JSON.stringify(user));
+      safeSetItem(STORAGE_KEYS.CURRENT_USER, JSON.stringify(sanitizeUserForStorage(user)));
     }
   },
 
@@ -237,7 +259,7 @@ export const storageService = {
   },
 
   saveAvisos(avisos: Aviso[]): void {
-    localStorage.setItem(STORAGE_KEYS.AVISOS, JSON.stringify(avisos));
+    safeSetItem(STORAGE_KEYS.AVISOS, JSON.stringify(avisos));
   },
 
   addAviso(aviso: Omit<Aviso, 'id_aviso' | 'data_publicacao'>): Aviso {
@@ -273,7 +295,7 @@ export const storageService = {
   },
 
   saveOcorrencias(ocorrencias: Ocorrencia[]): void {
-    localStorage.setItem(STORAGE_KEYS.OCORRENCIAS, JSON.stringify(ocorrencias));
+    safeSetItem(STORAGE_KEYS.OCORRENCIAS, JSON.stringify(ocorrencias));
   },
 
   addOcorrencia(
